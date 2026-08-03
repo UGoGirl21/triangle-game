@@ -67,7 +67,7 @@ body {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 8 / 9;
   background: #fffdf8;
   border: 1px solid #ebded4;
   cursor: crosshair;
@@ -179,16 +179,26 @@ input, .symbol-select { width: 100%; min-height: 44px; padding: 8px 10px; color:
     line-height: 1.8;
   }
   .paper-wrap { box-shadow: 5px 5px 0 var(--yellow); }
+  .score-card { grid-column: 1 / -1; }
+  .players-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .players-grid .card-gap { display: none; }
+  .players-grid .player-card { height: 100%; }
 }
 
 @media (max-width: 500px) {
-  body { padding-inline: 8px; }
-  .app { padding: 22px 12px 28px; border-width: 4px; border-radius: 38px; }
+  body { padding-inline: 3px; }
+  .app { padding: 22px 4px 28px; border-width: 4px; border-radius: 34px; }
   .title .eyebrow { font-size: .82rem; }
   .title .subtitle { font-size: .61rem; letter-spacing: .05em; }
   .heart-row { font-size: 1.5rem; }
-  .paper-wrap { padding: 6px; }
+  .paper-wrap { padding: 3px; border-width: 2px; box-shadow: 3px 3px 0 var(--yellow); }
   .side { grid-template-columns: 1fr; }
+  .side .score-card { grid-column: 1; padding: 12px 8px; }
+  .players-grid { gap: 7px; }
+  .players-grid .player-card { gap: 6px; padding: 9px 7px; }
+  .players-grid .swatch { width: 30px; height: 30px; flex-basis: 30px; }
+  .players-grid .player-name { font-size: .88rem; }
+  .players-grid .player-score { font-size: 1.25rem; }
   .rules { display: none; }
   .team-fields { grid-template-columns: 1fr; }
   .dialog-box { padding: 24px 16px; border-radius: 30px; }

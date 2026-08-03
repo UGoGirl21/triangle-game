@@ -67,7 +67,7 @@ function drawPreview(ctx, state, players, preview) {
   ctx.restore();
 }
 
-export function drawGame(ctx, state, players, pulseTime = 0, preview = null) {
+export function drawGame(ctx, state, players, pulseTime = 0, preview = null, dotScale = 1) {
   ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
   state.claimed.forEach((triangle) => drawTriangle(ctx, state, players, triangle));
   state.edges.forEach((edge) => drawEdge(ctx, state, players, edge));
@@ -75,11 +75,11 @@ export function drawGame(ctx, state, players, pulseTime = 0, preview = null) {
   state.dots.forEach((dot, index) => {
     ctx.save();
     if (state.selected === index) {
-      const pulse = 6 + Math.sin(pulseTime / 220) * 2.4;
-      ctx.beginPath(); ctx.arc(dot.x, dot.y, 9 + pulse, 0, Math.PI * 2);
-      ctx.strokeStyle = players[state.currentPlayer].color; ctx.lineWidth = 2; ctx.globalAlpha = 0.55; ctx.stroke();
+      const pulse = (6 + Math.sin(pulseTime / 220) * 2.4) * dotScale;
+      ctx.beginPath(); ctx.arc(dot.x, dot.y, 9 * dotScale + pulse, 0, Math.PI * 2);
+      ctx.strokeStyle = players[state.currentPlayer].color; ctx.lineWidth = 2 * dotScale; ctx.globalAlpha = 0.55; ctx.stroke();
     }
-    ctx.globalAlpha = 1; ctx.beginPath(); ctx.arc(dot.x, dot.y, 4.2, 0, Math.PI * 2);
+    ctx.globalAlpha = 1; ctx.beginPath(); ctx.arc(dot.x, dot.y, 4.2 * dotScale, 0, Math.PI * 2);
     ctx.fillStyle = "#522817"; ctx.fill(); ctx.restore();
   });
 }

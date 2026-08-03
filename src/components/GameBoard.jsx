@@ -21,7 +21,8 @@ export default function GameBoard({ state, players, disabled, onPick }) {
         canvas.width = LOGICAL_W * dpr; canvas.height = LOGICAL_H * dpr;
       }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      drawGame(ctx, state, players, time, preview);
+      const dotScale = window.matchMedia("(max-width: 800px)").matches ? 1.6 : 1;
+      drawGame(ctx, state, players, time, preview, dotScale);
       if (state.selected !== null) frame = requestAnimationFrame(render);
     };
     render();
