@@ -83,7 +83,23 @@ export default function App() {
 
   return <>
     <main className="app">
-      <header className="title"><h1>삼각 땅따먹기</h1><p>Triangle Territory · 점을 이어 삼각형을 완성하세요</p></header>
+      <header className="title">
+        <p className="eyebrow">점을 이어 만드는 우리만의 땅!</p>
+        <h1><span>삼각</span> 땅따먹기</h1>
+        <p className="subtitle">Triangle Territory · 점을 이어 삼각형을 완성하세요</p>
+        <details className="mobile-rules">
+          <summary>게임 방법</summary>
+          <div className="mobile-rules-content">
+            1. 점을 탭해 선택<br />
+            2. 다른 점을 탭해 선 긋기<br />
+            3. 점과 점은 직선으로만 연결<br />
+            4. 선이 서로 교차할 순 없음<br />
+            5. 완성한 모든 삼각형은 점수 획득<br />
+            6. 노란 선은 가장 최근에 둔 수<br />
+            7. 더 그을 선이 없으면 게임 종료
+          </div>
+        </details>
+      </header>
       <div className="paper-wrap">
         <GameBoard state={state} players={players} disabled={showSetup || state.gameOver || aiThinking} onPick={handlePick} />
         <div className={`toast${state.notice ? " show" : ""}`} role="status" aria-live="polite">
@@ -95,7 +111,7 @@ export default function App() {
         <section className="card controls">
           <button type="button" onClick={() => setShowSetup(true)}>새 게임</button>
         </section>
-        <section className="card rules">1. 점을 탭해 선택<br />2. 다른 점을 탭해 선 긋기<br />3. 선이 서로 교차할 순 없음<br />4. 완성한 모든 삼각형은 점수 획득<br />5. 득점해도 턴은 상대에게 넘어감<br />6. 금색 선은 가장 최근에 둔 수<br />7. 더 그을 선이 없으면 게임 종료</section>
+        <section className="card rules"><h2>게임 방법</h2>1. 점을 탭해 선택<br />2. 다른 점을 탭해 선 긋기<br />3. 점과 점은 직선으로만 연결<br />4. 선이 서로 교차할 순 없음<br />5. 완성한 모든 삼각형은 점수 획득<br />6. 노란 선은 가장 최근에 둔 수<br />7. 더 그을 선이 없으면 게임 종료</section>
       </aside>
     </main>
     {showSetup && <SetupDialog players={players} difficulty={difficulty} onStart={startGame} />}

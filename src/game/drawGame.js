@@ -8,16 +8,6 @@ function hash(a, b) {
   return ((h >>> 0) % 1000) / 1000;
 }
 
-function jitterControl(dots, i, j) {
-  const p1 = dots[i];
-  const p2 = dots[j];
-  const dx = p2.x - p1.x;
-  const dy = p2.y - p1.y;
-  const length = Math.hypot(dx, dy) || 1;
-  const amount = (hash(i, j) - 0.5) * 10;
-  return { x: (p1.x + p2.x) / 2 - (dy / length) * amount, y: (p1.y + p2.y) / 2 + (dx / length) * amount };
-}
-
 function drawTriangle(ctx, state, players, triangle) {
   const a = state.dots[triangle.a];
   const b = state.dots[triangle.b];
@@ -40,26 +30,24 @@ function drawTriangle(ctx, state, players, triangle) {
   ctx.translate((a.x + b.x + c.x) / 3, (a.y + b.y + c.y) / 3);
   ctx.rotate((hash(triangle.a, triangle.b) - 0.5) * 0.5);
   ctx.globalAlpha = 0.85; ctx.fillStyle = player.dark;
-  ctx.font = "700 15px 'Kalam', cursive"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.font = "700 15px 'Gowun Dodum', sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
   ctx.fillText(`${player.symbol}${triangle.seq}`, 0, 0); ctx.restore();
 }
 
 function drawEdge(ctx, state, players, edge) {
   const p1 = state.dots[edge.a]; const p2 = state.dots[edge.b];
-  const control = jitterControl(state.dots, edge.a, edge.b);
   const isLast = state.lastMoveKey === edgeKey(edge.a, edge.b);
   ctx.save();
-  ctx.strokeStyle = isLast ? "#d9a83a" : players[edge.player].color;
+  ctx.strokeStyle = isLast ? "#ffe600" : players[edge.player].color;
   ctx.lineWidth = isLast ? 3.4 : 2.4; ctx.lineCap = "round";
-  if (isLast) { ctx.shadowColor = "rgba(217,168,58,.6)"; ctx.shadowBlur = 6; }
-  ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.quadraticCurveTo(control.x, control.y, p2.x, p2.y); ctx.stroke(); ctx.restore();
+  if (isLast) { ctx.shadowColor = "rgba(255,230,0,.7)"; ctx.shadowBlur = 6; }
+  ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); ctx.restore();
 }
 
 function drawPreview(ctx, state, players, preview) {
   if (!preview) return;
   const p1 = state.dots[preview.from];
   const p2 = state.dots[preview.to];
-  const control = jitterControl(state.dots, preview.from, preview.to);
   ctx.save();
   ctx.strokeStyle = preview.valid ? players[state.currentPlayer].color : "#85827a";
   ctx.lineWidth = preview.valid ? 2.6 : 2.2;
@@ -68,7 +56,7 @@ function drawPreview(ctx, state, players, preview) {
   ctx.lineCap = "round";
   ctx.beginPath();
   ctx.moveTo(p1.x, p1.y);
-  ctx.quadraticCurveTo(control.x, control.y, p2.x, p2.y);
+  ctx.lineTo(p2.x, p2.y);
   ctx.stroke();
   ctx.setLineDash([]);
   ctx.beginPath();
@@ -92,6 +80,6 @@ export function drawGame(ctx, state, players, pulseTime = 0, preview = null) {
       ctx.strokeStyle = players[state.currentPlayer].color; ctx.lineWidth = 2; ctx.globalAlpha = 0.55; ctx.stroke();
     }
     ctx.globalAlpha = 1; ctx.beginPath(); ctx.arc(dot.x, dot.y, 4.2, 0, Math.PI * 2);
-    ctx.fillStyle = "#3a3730"; ctx.fill(); ctx.restore();
+    ctx.fillStyle = "#522817"; ctx.fill(); ctx.restore();
   });
 }

@@ -11,6 +11,6 @@ export const DIFFICULTY_DOT_COUNTS = {
 };
 
 export const INITIAL_PLAYERS = {
-  1: { name: "잉크팀", symbol: "★", color: "#2d4373", dark: "#1c2c4d" },
-  2: { name: "산호팀", symbol: "♥", color: "#b5502f", dark: "#7d341c" },
+  1: { name: "보라팀", symbol: "★", color: "#74399a", dark: "#4f216c" },
+  2: { name: "주황팀", symbol: "♥", color: "#f05a13", dark: "#a83b08" },
 };
