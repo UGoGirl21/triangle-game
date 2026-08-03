@@ -1,4 +1,4 @@
-import { DOT_COUNT, DOT_LINE_CLEARANCE, LOGICAL_H, LOGICAL_W, MIN_DIST } from "./constants.js";
+import { DOT_COUNT, DOT_LINE_CLEARANCE, LOGICAL_H, LOGICAL_W, MIN_DIST, MOBILE_LOGICAL_H } from "./constants.js";
 import { distanceToSegment, edgeKey, segmentsIntersect, triKey } from "./geometry.js";
 
 function createsCrowdedHorizontalLine(points, candidate) {
@@ -14,14 +14,14 @@ function createsCrowdedHorizontalLine(points, candidate) {
   return false;
 }
 
-export function generateDots(dotCount = DOT_COUNT) {
+export function generateDots(dotCount = DOT_COUNT, boardHeight = LOGICAL_H) {
   const points = [];
   const margin = 36;
   let attempts = 0;
   while (points.length < dotCount && attempts < 30000) {
     attempts += 1;
     const x = margin + Math.random() * (LOGICAL_W - margin * 2);
-    const y = margin + Math.random() * (LOGICAL_H - margin * 2);
+    const y = margin + Math.random() * (boardHeight - margin * 2);
     const candidate = { x, y };
     if (points.every((point) => (point.x - x) ** 2 + (point.y - y) ** 2 >= MIN_DIST ** 2) &&
       !createsCrowdedHorizontalLine(points, candidate)) {
@@ -32,8 +32,10 @@ export function generateDots(dotCount = DOT_COUNT) {
 }
 
 export function createGame(dotCount = DOT_COUNT) {
+  const boardHeight = typeof window !== "undefined" && window.matchMedia("(max-width: 800px)").matches
+    ? MOBILE_LOGICAL_H : LOGICAL_H;
   return {
-    dots: generateDots(dotCount), edges: new Map(), claimed: new Map(), currentPlayer: 1,
+    dots: generateDots(dotCount, boardHeight), boardHeight, edges: new Map(), claimed: new Map(), currentPlayer: 1,
     selected: null, scores: { 1: 0, 2: 0 }, gameOver: false, lastMoveKey: null,
     moveCount: 0, notice: null,
   };

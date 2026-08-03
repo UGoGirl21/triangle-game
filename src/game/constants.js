@@ -1,5 +1,6 @@
 export const LOGICAL_W = 960;
-export const LOGICAL_H = 1080;
+export const LOGICAL_H = 720;
+export const MOBILE_LOGICAL_H = 1080;
 export const DOT_COUNT = 50;
 export const MIN_DIST = 55;
 export const DOT_LINE_CLEARANCE = 12;

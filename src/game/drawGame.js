@@ -67,8 +67,8 @@ function drawPreview(ctx, state, players, preview) {
   ctx.restore();
 }
 
-export function drawGame(ctx, state, players, pulseTime = 0, preview = null, dotScale = 1) {
-  ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
+export function drawGame(ctx, state, players, pulseTime = 0, preview = null, dotScale = 1, logicalHeight = LOGICAL_H) {
+  ctx.clearRect(0, 0, LOGICAL_W, logicalHeight);
   state.claimed.forEach((triangle) => drawTriangle(ctx, state, players, triangle));
   state.edges.forEach((edge) => drawEdge(ctx, state, players, edge));
   drawPreview(ctx, state, players, preview);

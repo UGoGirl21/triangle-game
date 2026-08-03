@@ -14,15 +14,16 @@ export default function GameBoard({ state, players, disabled, onPick }) {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+    const logicalHeight = state.boardHeight || LOGICAL_H;
     let frame = 0;
     const render = (time = 0) => {
       const dpr = Math.min(window.devicePixelRatio || 1, 3);
-      if (canvas.width !== LOGICAL_W * dpr || canvas.height !== LOGICAL_H * dpr) {
-        canvas.width = LOGICAL_W * dpr; canvas.height = LOGICAL_H * dpr;
+      if (canvas.width !== LOGICAL_W * dpr || canvas.height !== logicalHeight * dpr) {
+        canvas.width = LOGICAL_W * dpr; canvas.height = logicalHeight * dpr;
       }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const dotScale = window.matchMedia("(max-width: 800px)").matches ? 1.6 : 1;
-      drawGame(ctx, state, players, time, preview, dotScale);
+      drawGame(ctx, state, players, time, preview, dotScale, logicalHeight);
       if (state.selected !== null) frame = requestAnimationFrame(render);
     };
     render();
@@ -33,7 +34,8 @@ export default function GameBoard({ state, players, disabled, onPick }) {
 
   function pointerPosition(event) {
     const rect = canvasRef.current.getBoundingClientRect();
-    return { x: (event.clientX - rect.left) * (LOGICAL_W / rect.width), y: (event.clientY - rect.top) * (LOGICAL_H / rect.height), rect };
+    const logicalHeight = state.boardHeight || LOGICAL_H;
+    return { x: (event.clientX - rect.left) * (LOGICAL_W / rect.width), y: (event.clientY - rect.top) * (logicalHeight / rect.height), rect };
   }
 
   function nearestDot(position, pointerType, rect) {

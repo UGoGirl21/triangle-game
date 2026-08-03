@@ -84,7 +84,6 @@ export default function App() {
   return <>
     <main className="app">
       <header className="title">
-        <p className="eyebrow">점을 이어 만드는 우리만의 땅!</p>
         <h1><span>삼각</span> 땅따먹기</h1>
         <p className="subtitle">Triangle Territory · 점을 이어 삼각형을 완성하세요</p>
         <details className="mobile-rules">

@@ -67,7 +67,7 @@ body {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 8 / 9;
+  aspect-ratio: 4 / 3;
   background: #fffdf8;
   border: 1px solid #ebded4;
   cursor: crosshair;
@@ -179,6 +179,7 @@ input, .symbol-select { width: 100%; min-height: 44px; padding: 8px 10px; color:
     line-height: 1.8;
   }
   .paper-wrap { box-shadow: 5px 5px 0 var(--yellow); }
+  #board { aspect-ratio: 8 / 9; }
   .score-card { grid-column: 1 / -1; }
   .players-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .players-grid .card-gap { display: none; }
