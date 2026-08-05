@@ -1,6 +1,8 @@
-export default function ScorePanel({ players, state, aiThinking }) {
-  const displayName = (player) => player === 2 ? `${players[player].name} (AI)` : players[player].name;
-  const turnText = state.gameOver ? "게임 종료" : aiThinking ? "AI가 생각 중..." : `${displayName(state.currentPlayer)} 차례`;
+export default function ScorePanel({
+  players, state, aiThinking,
+  displayName = (player) => player === 2 ? `${players[player].name} (AI)` : players[player].name,
+  turnText = state.gameOver ? "게임 종료" : aiThinking ? "AI가 생각 중..." : `${displayName(state.currentPlayer)} 차례`,
+}) {
   return (
     <section className="card score-card">
       <p className="turn-line">{turnText}</p>

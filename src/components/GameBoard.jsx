@@ -75,6 +75,7 @@ export default function GameBoard({ state, players, disabled, onPick }) {
   }
 
   return <canvas ref={canvasRef} id="board" aria-label="삼각 땅따먹기 게임판"
+    style={{ aspectRatio: `${LOGICAL_W} / ${state.boardHeight || LOGICAL_H}` }}
     onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp}
     onPointerLeave={() => setHoveredDot(null)}
     onPointerCancel={() => { pointerRef.current = null; setHoveredDot(null); }} />;

@@ -125,7 +125,7 @@ button {
 button:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
 button:active { transform: translate(4px, 4px); box-shadow: none; }
 button:focus-visible, input:focus-visible, select:focus-visible { outline: 4px solid var(--yellow); outline-offset: 3px; }
-.controls { background: #fff8cf; box-shadow: 5px 5px 0 var(--yellow); }
+.controls { display: grid; gap: 10px; background: #fff8cf; box-shadow: 5px 5px 0 var(--yellow); }
 .rules { font-size: .78rem; line-height: 1.75; }
 .rules h2 { margin: -4px 0 8px; padding: 6px; color: var(--orange); background: #fff8cf; font: 400 1.05rem "Black Han Sans", sans-serif; text-align: center; }
 
@@ -143,6 +143,16 @@ input, .symbol-select { width: 100%; min-height: 44px; padding: 8px 10px; color:
 .setup-difficulty { max-width: 260px; margin: 0 auto 16px; text-align: left; }
 .form-error { min-height: 1.4em; margin: -8px 0 8px !important; color: #a52a14; font-weight: 700; }
 .winner-box { max-width: 360px; }
+.dialog-box button + button { margin-top: 10px; }
+.room-code { margin: 0 0 12px; color: var(--purple); font: 400 2.4rem "Black Han Sans", sans-serif; letter-spacing: .08em; }
+
+.leaderboard-card, .app > button { grid-column: 1 / -1; }
+.leaderboard-card { width: min(100%, 560px); margin: 0 auto 18px; overflow-x: auto; }
+.app > button { max-width: 200px; margin: 0 auto; }
+.leaderboard-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.leaderboard-table th, .leaderboard-table td { padding: 9px 8px; border-bottom: 2px solid #f0e4dc; text-align: center; }
+.leaderboard-table th { color: var(--orange); font-weight: 700; }
+.leaderboard-table td:nth-child(2) { text-align: left; font-weight: 700; }
 
 @media (max-width: 800px) {
   body { padding-top: max(14px, env(safe-area-inset-top)); }

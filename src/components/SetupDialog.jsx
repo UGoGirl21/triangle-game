@@ -1,11 +1,5 @@
 import { useState } from "react";
-
-const SYMBOL_OPTIONS = [
-  { value: "★", label: "★ 별" },
-  { value: "♥", label: "♥ 하트" },
-  { value: "♠", label: "♠ 스페이드" },
-  { value: "●", label: "● 동그라미" },
-];
+import { SYMBOL_OPTIONS } from "../game/constants.js";
 
 export default function SetupDialog({ players, difficulty, onStart }) {
   const [values, setValues] = useState(() => ({ 1: { name: players[1].name, symbol: players[1].symbol }, 2: { name: players[2].name, symbol: players[2].symbol } }));

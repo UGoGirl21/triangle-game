@@ -14,14 +14,14 @@ function createsCrowdedHorizontalLine(points, candidate) {
   return false;
 }
 
-export function generateDots(dotCount = DOT_COUNT, boardHeight = LOGICAL_H) {
+export function generateDots(dotCount = DOT_COUNT, boardHeight = LOGICAL_H, rng = Math.random) {
   const points = [];
   const margin = 36;
   let attempts = 0;
   while (points.length < dotCount && attempts < 30000) {
     attempts += 1;
-    const x = margin + Math.random() * (LOGICAL_W - margin * 2);
-    const y = margin + Math.random() * (boardHeight - margin * 2);
+    const x = margin + rng() * (LOGICAL_W - margin * 2);
+    const y = margin + rng() * (boardHeight - margin * 2);
     const candidate = { x, y };
     if (points.every((point) => (point.x - x) ** 2 + (point.y - y) ** 2 >= MIN_DIST ** 2) &&
       !createsCrowdedHorizontalLine(points, candidate)) {
@@ -31,13 +31,14 @@ export function generateDots(dotCount = DOT_COUNT, boardHeight = LOGICAL_H) {
   return points;
 }
 
-export function createGame(dotCount = DOT_COUNT) {
-  const boardHeight = typeof window !== "undefined" && window.matchMedia("(max-width: 800px)").matches
-    ? MOBILE_LOGICAL_H : LOGICAL_H;
+export function createGame(dotCount = DOT_COUNT, { rng = Math.random, boardHeight } = {}) {
+  const resolvedHeight = boardHeight ??
+    (typeof window !== "undefined" && window.matchMedia("(max-width: 800px)").matches
+      ? MOBILE_LOGICAL_H : LOGICAL_H);
   return {
-    dots: generateDots(dotCount, boardHeight), boardHeight, edges: new Map(), claimed: new Map(), currentPlayer: 1,
-    selected: null, scores: { 1: 0, 2: 0 }, gameOver: false, lastMoveKey: null,
-    moveCount: 0, notice: null,
+    dots: generateDots(dotCount, resolvedHeight, rng), boardHeight: resolvedHeight, edges: new Map(),
+    claimed: new Map(), currentPlayer: 1, selected: null, scores: { 1: 0, 2: 0 }, gameOver: false,
+    lastMoveKey: null, moveCount: 0, notice: null,
   };
 }
 

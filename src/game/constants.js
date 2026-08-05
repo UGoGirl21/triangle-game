@@ -15,3 +15,10 @@ export const INITIAL_PLAYERS = {
   1: { name: "보라팀", symbol: "★", color: "#74399a", dark: "#4f216c" },
   2: { name: "주황팀", symbol: "♥", color: "#f05a13", dark: "#a83b08" },
 };
+
+export const SYMBOL_OPTIONS = [
+  { value: "★", label: "★ 별" },
+  { value: "♥", label: "♥ 하트" },
+  { value: "♠", label: "♠ 스페이드" },
+  { value: "●", label: "● 동그라미" },
+];
