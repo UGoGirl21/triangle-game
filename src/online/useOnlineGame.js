@@ -5,6 +5,7 @@ import { mulberry32, randomSeed } from "../game/rng.js";
 import { LOGICAL_H, MOBILE_LOGICAL_H } from "../game/constants.js";
 
 const JOIN_TIMEOUT_MS = 6000;
+const DISCONNECT_GRACE_MS = 3000;
 
 const randomRoomCode = () => Math.random().toString(36).slice(2, 8).toUpperCase();
 
@@ -22,8 +23,14 @@ export function useOnlineGame() {
   const [clientId] = useState(() => crypto.randomUUID());
   const channelRef = useRef(null);
   const pairedRef = useRef(false);
+  const announceRef = useRef(null);
+  const disconnectTimerRef = useRef(null);
 
   function cleanup() {
+    if (disconnectTimerRef.current) {
+      window.clearTimeout(disconnectTimerRef.current);
+      disconnectTimerRef.current = null;
+    }
     if (channelRef.current) {
       supabase.removeChannel(channelRef.current);
       channelRef.current = null;
@@ -34,6 +41,33 @@ export function useOnlineGame() {
 
   function dispatchLocal(action) {
     setGameState((prev) => (prev ? gameReducer(prev, action) : prev));
+  }
+
+  // Re-tracking presence (e.g. status "waiting" -> "started") makes the peer briefly
+  // see a "leave" for the old ref immediately followed by a "join" for the new one —
+  // that's normal Presence churn, not a real disconnect. Confirm absence after a grace
+  // window (and let a same-role "join" within that window cancel the check) before
+  // treating it as one.
+  function watchPeerLeave(channel, peerRole, onConfirmedLeave) {
+    const peerPresent = () => {
+      const stateMap = channel.presenceState();
+      return Object.keys(stateMap).some((key) => key !== clientId && stateMap[key][0].role === peerRole);
+    };
+    channel.on("presence", { event: "leave" }, ({ key }) => {
+      if (key === clientId || !pairedRef.current) return;
+      if (disconnectTimerRef.current) window.clearTimeout(disconnectTimerRef.current);
+      disconnectTimerRef.current = window.setTimeout(() => {
+        disconnectTimerRef.current = null;
+        if (!peerPresent()) onConfirmedLeave();
+      }, DISCONNECT_GRACE_MS);
+    });
+    channel.on("presence", { event: "join" }, ({ key }) => {
+      if (key === clientId || !disconnectTimerRef.current) return;
+      if (peerPresent()) {
+        window.clearTimeout(disconnectTimerRef.current);
+        disconnectTimerRef.current = null;
+      }
+    });
   }
 
   function startAsHost({ name, symbol, dotCount }) {
@@ -48,6 +82,7 @@ export function useOnlineGame() {
       config: { presence: { key: clientId } },
     });
     channelRef.current = channel;
+    announceRef.current = { clientId, role: 1, name, symbol, status: "waiting" };
 
     channel.on("presence", { event: "sync" }, () => {
       if (pairedRef.current) return;
@@ -65,7 +100,8 @@ export function useOnlineGame() {
           setPlayers(nextPlayers);
           setGameState(createGame(dotCount, { rng: mulberry32(seed), boardHeight }));
           setPhase("playing");
-          channel.track({ clientId, role: 1, name, symbol, status: "started" });
+          announceRef.current = { clientId, role: 1, name, symbol, status: "started" };
+          channel.track(announceRef.current);
           channel.send({
             type: "broadcast",
             event: "init",
@@ -76,8 +112,13 @@ export function useOnlineGame() {
       }
     });
 
-    channel.on("presence", { event: "leave" }, ({ key }) => {
-      if (key !== clientId && pairedRef.current) setPhase("disconnected");
+    watchPeerLeave(channel, 2, () => {
+      pairedRef.current = false;
+      announceRef.current = { clientId, role: 1, name, symbol, status: "waiting" };
+      channel.track(announceRef.current);
+      setPlayers({ 1: { name, symbol }, 2: null });
+      setGameState(null);
+      setPhase("hosting");
     });
 
     channel.on("broadcast", { event: "move" }, ({ payload }) => {
@@ -85,9 +126,7 @@ export function useOnlineGame() {
     });
 
     channel.subscribe(async (status) => {
-      if (status === "SUBSCRIBED") {
-        await channel.track({ clientId, role: 1, name, symbol, status: "waiting" });
-      }
+      if (status === "SUBSCRIBED") await channel.track(announceRef.current);
     });
   }
 
@@ -103,6 +142,7 @@ export function useOnlineGame() {
       config: { presence: { key: clientId } },
     });
     channelRef.current = channel;
+    announceRef.current = { clientId, role: 2, name: "", symbol: "", status: "previewing" };
 
     let settled = false;
     const timer = window.setTimeout(() => {
@@ -126,13 +166,12 @@ export function useOnlineGame() {
           setPhase("room-taken");
           return;
         }
+        window.clearTimeout(timer);
         setHostInfo({ name: entry.name, symbol: entry.symbol });
       }
     });
 
-    channel.on("presence", { event: "leave" }, ({ key }) => {
-      if (key !== clientId && pairedRef.current) setPhase("disconnected");
-    });
+    watchPeerLeave(channel, 1, () => setPhase("disconnected"));
 
     channel.on("broadcast", { event: "init" }, ({ payload }) => {
       settled = true;
@@ -150,18 +189,13 @@ export function useOnlineGame() {
     });
 
     channel.subscribe(async (status) => {
-      if (status === "SUBSCRIBED") {
-        await channel.track({
-          clientId, role: 2, name: "", symbol: "", status: "previewing",
-        });
-      }
+      if (status === "SUBSCRIBED") await channel.track(announceRef.current);
     });
   }
 
   function finalizeJoin({ name, symbol }) {
-    channelRef.current?.track({
-      clientId, role: 2, name, symbol, status: "ready",
-    });
+    announceRef.current = { clientId, role: 2, name, symbol, status: "ready" };
+    channelRef.current?.track(announceRef.current);
   }
 
   function makeMove(a, b) {
