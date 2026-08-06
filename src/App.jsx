@@ -8,6 +8,7 @@ import { chooseAiMove } from "./game/ai.js";
 import { DIFFICULTY_DOT_COUNTS, randomPlayers } from "./game/constants.js";
 import { canConnect, createGame, edgeCrossesAny, edgePassesNearDot, gameReducer } from "./game/gameLogic.js";
 import { edgeKey } from "./game/geometry.js";
+import { useTurnTimer } from "./useTurnTimer.js";
 
 export default function App({ onNavigate }) {
   const [players, setPlayers] = useState(randomPlayers);
@@ -17,6 +18,7 @@ export default function App({ onNavigate }) {
   const [showRules, setShowRules] = useState(false);
   const stateRef = useRef(state);
   const aiThinking = !showSettings && !showRules && !state.gameOver && state.currentPlayer === 2;
+  const myTurnActive = !showSettings && !showRules && !state.gameOver && state.currentPlayer === 1;
 
   const displayName = (player) => player === 2 ? `${players[player].name} (AI)` : players[player].name;
 
@@ -38,6 +40,10 @@ export default function App({ onNavigate }) {
     const timer = window.setTimeout(() => dispatch({ type: "CLEAR_NOTICE" }), 1400);
     return () => window.clearTimeout(timer);
   }, [state.notice]);
+
+  const timeLeft = useTurnTimer(myTurnActive, state.moveCount, () => {
+    dispatch({ type: "TIMEOUT_SKIP", id: Date.now(), message: "시간 초과! 턴이 넘어갔어요" });
+  });
 
   function handlePick(index) {
     if (index === -1 || state.gameOver || aiThinking) {
@@ -76,6 +82,9 @@ export default function App({ onNavigate }) {
     setShowSettings(false);
   }
 
+  const turnText = state.gameOver ? "게임 종료" : aiThinking ? "AI가 생각 중..." :
+    timeLeft !== null ? `${displayName(state.currentPlayer)} 차례 · ${timeLeft}초` : `${displayName(state.currentPlayer)} 차례`;
+
   let winnerMessage = "";
   if (state.gameOver) {
     if (state.scores[1] === state.scores[2]) winnerMessage = "무승부입니다!";
@@ -98,8 +107,9 @@ export default function App({ onNavigate }) {
         </div>
       </div>
       <aside className="side">
-        <ScorePanel players={players} state={state} aiThinking={aiThinking} />
+        <ScorePanel players={players} state={state} aiThinking={aiThinking} turnText={turnText} />
         <section className="card controls">
+          <button type="button" onClick={() => onNavigate("daily")}>오늘의 챌린지</button>
           <button type="button" onClick={startNewGame}>새 게임</button>
           <button type="button" onClick={() => onNavigate("online")}>친구와 대전</button>
           <button type="button" onClick={() => onNavigate("leaderboard")}>랭킹</button>

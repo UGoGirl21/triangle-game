@@ -11,6 +11,8 @@ export const DIFFICULTY_DOT_COUNTS = {
   hard: 70,
 };
 
+export const TURN_TIME_LIMIT_SECONDS = 15;
+
 export const SYMBOL_OPTIONS = [
   { value: "★", label: "★ 별" },
   { value: "♥", label: "♥ 하트" },
@@ -23,7 +25,7 @@ export const COLOR_OPTIONS = [
   { key: "green", label: "초록", color: "#2f9e44", dark: "#1e6b2d" },
   { key: "blue", label: "파랑", color: "#1c7ed6", dark: "#12518f" },
   { key: "purple", label: "보라", color: "#74399a", dark: "#4f216c" },
-  { key: "pink", label: "분홍", color: "#e64980", dark: "#a52f5b" },
+  { key: "brown", label: "브라운", color: "#8b5a2b", dark: "#5c3a1a" },
 ];
 
 export const NAME_WORDS = [

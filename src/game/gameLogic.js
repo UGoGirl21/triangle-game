@@ -111,6 +111,10 @@ export function gameReducer(state, action) {
     case "MOVE": return applyMove(state, action.a, action.b);
     case "SHOW_NOTICE": return { ...state, selected: null, notice: { id: action.id, message: action.message } };
     case "CLEAR_NOTICE": return { ...state, notice: null };
+    case "TIMEOUT_SKIP": return {
+      ...state, selected: null, currentPlayer: state.currentPlayer === 1 ? 2 : 1,
+      notice: { id: action.id, message: action.message },
+    };
     default: return state;
   }
 }

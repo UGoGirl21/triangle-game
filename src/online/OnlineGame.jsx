@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import GameBoard from "../components/GameBoard.jsx";
 import RulesDialog from "../components/RulesDialog.jsx";
 import ScorePanel from "../components/ScorePanel.jsx";
@@ -6,9 +6,7 @@ import WinnerDialog from "../components/WinnerDialog.jsx";
 import { DIFFICULTY_DOT_COUNTS, SYMBOL_OPTIONS } from "../game/constants.js";
 import { canConnect, edgeCrossesAny, edgePassesNearDot } from "../game/gameLogic.js";
 import { edgeKey } from "../game/geometry.js";
-import { supabase } from "../lib/supabaseClient.js";
 import { useOnlineGame } from "./useOnlineGame.js";
-import { saveGameResult } from "./onlineResults.js";
 
 export default function OnlineGame({ onExit }) {
   const {
@@ -22,7 +20,6 @@ export default function OnlineGame({ onExit }) {
   const [joinForm, setJoinForm] = useState({ name: "", symbol: "" });
   const [error, setError] = useState("");
   const [showRules, setShowRules] = useState(false);
-  const savedRef = useRef(false);
   const joinSymbol = joinForm.symbol || SYMBOL_OPTIONS.find((option) => option.value !== hostInfo?.symbol)?.value;
 
   useEffect(() => {
@@ -31,17 +28,7 @@ export default function OnlineGame({ onExit }) {
     return () => window.clearTimeout(timer);
   }, [gameState?.notice, clearNotice]);
 
-  useEffect(() => {
-    if (gameState?.gameOver && role === 1 && !savedRef.current) {
-      savedRef.current = true;
-      saveGameResult(supabase, {
-        roomCode: code, players, scores: gameState.scores, dotCount: gameState.dots.length,
-      });
-    }
-  }, [gameState, role, code, players]);
-
   function backToMenu() {
-    savedRef.current = false;
     leave();
     setView("select");
     setError("");

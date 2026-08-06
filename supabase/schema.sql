@@ -50,3 +50,33 @@ order by wins desc, win_rate desc, games_played desc;
 -- anon/authenticated for new public-schema objects, but stated explicitly for safety.
 grant select, insert on game_results to anon, authenticated;
 grant select on leaderboard to anon, authenticated;
+
+-- Daily challenge: everyone gets the same dot layout + AI difficulty for a given
+-- KST calendar day (derived client-side from a date-based seed), plays one solo
+-- match against the AI, and today's attempts rank against each other. The
+-- `game_results` / `leaderboard` view above back the old friend-match ranking,
+-- which is no longer surfaced in the UI; left in place rather than dropped.
+create table if not exists daily_challenge_scores (
+  id uuid primary key default gen_random_uuid(),
+  challenge_date date not null,
+  name text not null,
+  score integer not null,
+  opponent_score integer not null,
+  duration_seconds integer not null,
+  difficulty text not null,
+  dot_count integer not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists daily_challenge_scores_date_idx on daily_challenge_scores (challenge_date, score desc, duration_seconds asc);
+
+alter table daily_challenge_scores enable row level security;
+
+create policy "public can read daily scores" on daily_challenge_scores
+  for select using (true);
+
+create policy "public can insert daily scores" on daily_challenge_scores
+  for insert with check (true);
+-- No update/delete policies -> those operations are denied by default under RLS.
+
+grant select, insert on daily_challenge_scores to anon, authenticated;
