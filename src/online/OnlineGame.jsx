@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import GameBoard from "../components/GameBoard.jsx";
+import RulesDialog from "../components/RulesDialog.jsx";
 import ScorePanel from "../components/ScorePanel.jsx";
 import WinnerDialog from "../components/WinnerDialog.jsx";
 import { DIFFICULTY_DOT_COUNTS, SYMBOL_OPTIONS } from "../game/constants.js";
@@ -11,7 +12,7 @@ import { saveGameResult } from "./onlineResults.js";
 
 export default function OnlineGame({ onExit }) {
   const {
-    phase, code, role, players, hostInfo, gameState,
+    phase, code, role, players, hostInfo, gameState, debugInfo,
     startAsHost, peekRoom, finalizeJoin, makeMove, select, cancel, showNotice, clearNotice, leave,
   } = useOnlineGame();
 
@@ -20,6 +21,7 @@ export default function OnlineGame({ onExit }) {
   const [joinCode, setJoinCode] = useState("");
   const [joinForm, setJoinForm] = useState({ name: "", symbol: "" });
   const [error, setError] = useState("");
+  const [showRules, setShowRules] = useState(false);
   const savedRef = useRef(false);
   const joinSymbol = joinForm.symbol || SYMBOL_OPTIONS.find((option) => option.value !== hostInfo?.symbol)?.value;
 
@@ -99,7 +101,7 @@ export default function OnlineGame({ onExit }) {
           <p className="subtitle">방 코드 {code}</p>
         </header>
         <div className="paper-wrap">
-          <GameBoard state={gameState} players={players} disabled={gameState.gameOver || !myTurn} onPick={handlePick} />
+          <GameBoard state={gameState} players={players} disabled={gameState.gameOver || !myTurn || showRules} onPick={handlePick} />
           <div className={`toast${gameState.notice ? " show" : ""}`} role="status" aria-live="polite">
             {gameState.notice ? gameState.notice.message || `${players[gameState.notice.player]?.name} 삼각형 완성!` : ""}
           </div>
@@ -109,10 +111,12 @@ export default function OnlineGame({ onExit }) {
             displayName={(player) => players[player].name} />
           <section className="card controls">
             <button type="button" onClick={backToMenu}>나가기</button>
+            <button type="button" onClick={() => setShowRules(true)}>게임 방법</button>
           </section>
         </aside>
       </main>
-      {gameState.gameOver && <WinnerDialog message={winnerMessage} onPlayAgain={backToMenu} />}
+      {showRules && <RulesDialog onClose={() => setShowRules(false)} />}
+      {!showRules && gameState.gameOver && <WinnerDialog message={winnerMessage} onPlayAgain={backToMenu} />}
     </>;
   }
 
@@ -134,6 +138,9 @@ export default function OnlineGame({ onExit }) {
     return <div className="overlay show"><div className="dialog-box">
       <h2>이미 시작된 방이에요</h2><p>다른 방 코드를 사용해주세요.</p>
       <button type="button" onClick={backToMenu}>홈으로</button>
+      <pre style={{ textAlign: "left", fontSize: 11, whiteSpace: "pre-wrap", marginTop: 12 }}>
+        {JSON.stringify(debugInfo, null, 2)}
+      </pre>
     </div></div>;
   }
 

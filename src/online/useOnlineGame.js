@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabaseClient.js";
 import { createGame, gameReducer } from "../game/gameLogic.js";
 import { mulberry32, randomSeed } from "../game/rng.js";
-import { LOGICAL_H, MOBILE_LOGICAL_H } from "../game/constants.js";
+import { LOGICAL_H, MOBILE_LOGICAL_H, randomColorPair } from "../game/constants.js";
 
 const JOIN_TIMEOUT_MS = 6000;
 const DISCONNECT_GRACE_MS = 3000;
@@ -19,6 +19,7 @@ export function useOnlineGame() {
   const [players, setPlayers] = useState(null);
   const [hostInfo, setHostInfo] = useState(null);
   const [gameState, setGameState] = useState(null);
+  const [debugInfo, setDebugInfo] = useState(null);
 
   const [clientId] = useState(() => crypto.randomUUID());
   const channelRef = useRef(null);
@@ -94,8 +95,9 @@ export function useOnlineGame() {
           pairedRef.current = true;
           const seed = randomSeed();
           const boardHeight = resolveBoardHeight();
-          const guestInfo = { name: entry.name, symbol: entry.symbol };
-          const hostInfoLocal = { name, symbol };
+          const [hostColor, guestColor] = randomColorPair();
+          const guestInfo = { name: entry.name, symbol: entry.symbol, color: guestColor.color, dark: guestColor.dark };
+          const hostInfoLocal = { name, symbol, color: hostColor.color, dark: hostColor.dark };
           const nextPlayers = { 1: hostInfoLocal, 2: guestInfo };
           setPlayers(nextPlayers);
           setGameState(createGame(dotCount, { rng: mulberry32(seed), boardHeight }));
@@ -162,6 +164,7 @@ export function useOnlineGame() {
         if (entry.status === "started") {
           settled = true;
           window.clearTimeout(timer);
+          setDebugInfo({ myClientId: clientId, stateMap, matchedKey: key, matchedEntry: entry });
           cleanup();
           setPhase("room-taken");
           return;
@@ -231,7 +234,7 @@ export function useOnlineGame() {
   }
 
   return {
-    phase, code, role, players, hostInfo, gameState,
+    phase, code, role, players, hostInfo, gameState, debugInfo,
     startAsHost, peekRoom, finalizeJoin, makeMove, select, cancel, showNotice, clearNotice, leave,
   };
 }
