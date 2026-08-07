@@ -103,6 +103,7 @@ export default function App({ onNavigate }) {
       <header className="title">
         <h1><span>{t("appTitlePart1")}</span>{t("appTitlePart2")}</h1>
         <p className="subtitle">{t("appSubtitle")}</p>
+        <p className="intro-text">{t("appIntro")}</p>
       </header>
       <div className="paper-wrap">
         <GameBoard state={state} players={players} disabled={showSettings || showRules || state.gameOver || aiThinking} onPick={handlePick} />

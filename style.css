@@ -50,6 +50,7 @@ body {
 }
 .title h1 span { color: var(--purple); }
 .title .subtitle { margin: 0; color: #6d4e42; font-size: .76rem; letter-spacing: .12em; text-transform: uppercase; }
+.title .intro-text { margin: 6px auto 0; max-width: 46ch; color: #8a6a5c; font-size: .72rem; line-height: 1.5; }
 .heart-row { margin-top: 8px; color: var(--brown); font: 700 2rem/1 "Gowun Dodum", sans-serif; letter-spacing: .12em; }
 
 .paper-wrap {
@@ -190,6 +191,7 @@ input, .symbol-select { width: 100%; min-height: 44px; padding: 8px 10px; color:
   .title h1 { font-size: clamp(1.1rem, 6vw, 1.9rem); }
   .title .eyebrow { font-size: .82rem; }
   .title .subtitle { font-size: .61rem; letter-spacing: .05em; }
+  .title .intro-text { font-size: .64rem; }
   .heart-row { font-size: 1.5rem; }
   .paper-wrap { padding: 3px; border-width: 2px; box-shadow: 3px 3px 0 var(--yellow); }
   .side { grid-template-columns: 1fr; }
