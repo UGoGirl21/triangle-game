@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://triangle-game-one.vercel.app/sitemap.xml
