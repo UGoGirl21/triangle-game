@@ -120,6 +120,14 @@ button:active { transform: translate(4px, 4px); box-shadow: none; }
 button:focus-visible, input:focus-visible, select:focus-visible { outline: 4px solid var(--yellow); outline-offset: 3px; }
 .controls { display: grid; gap: 10px; background: #fff8cf; box-shadow: 5px 5px 0 var(--yellow); }
 
+.lang-toggle {
+  position: fixed; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right));
+  z-index: 60; width: auto; min-height: 0; padding: 7px 14px;
+  font-size: .85rem; box-shadow: 3px 3px 0 var(--ink);
+}
+.lang-toggle:hover { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--ink); }
+.lang-toggle:active { transform: translate(3px, 3px); box-shadow: none; }
+
 .overlay { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(68, 23, 27, .56); overflow-y: auto; }
 .overlay.show { display: flex; }
 .dialog-box { width: min(100%, 500px); padding: 28px; color: var(--ink); background: var(--paper); border: 5px dotted var(--brown); border-radius: 42px; box-shadow: 10px 10px 0 rgba(64, 20, 11, .25); text-align: center; }

@@ -1,11 +1,15 @@
+import { useLocale } from "../i18n/LocaleContext.js";
+
 export default function ScorePanel({
   players, state, aiThinking,
   displayName = (player) => player === 2 ? `${players[player].name} (AI)` : players[player].name,
-  turnText = state.gameOver ? "게임 종료" : aiThinking ? "AI가 생각 중..." : `${displayName(state.currentPlayer)} 차례`,
+  turnText,
 }) {
+  const { t } = useLocale();
+  const resolvedTurnText = turnText ?? (state.gameOver ? t("gameOver") : aiThinking ? t("aiThinking") : t("turnNoTime", { name: displayName(state.currentPlayer) }));
   return (
     <section className="card score-card">
-      <p className="turn-line">{turnText}</p>
+      <p className="turn-line">{resolvedTurnText}</p>
       <div className="players-grid">
         {[1, 2].map((player, index) => (
           <div key={player}>

@@ -7,11 +7,12 @@ import { randomPlayers } from "./game/constants.js";
 import { getDailyChallengeConfig } from "./game/dailyChallenge.js";
 import { canConnect, createGame, edgeCrossesAny, edgePassesNearDot, gameReducer } from "./game/gameLogic.js";
 import { edgeKey } from "./game/geometry.js";
+import { useLocale } from "./i18n/LocaleContext.js";
 import { mulberry32 } from "./game/rng.js";
 import { supabase } from "./lib/supabaseClient.js";
 import { useTurnTimer } from "./useTurnTimer.js";
 
-const DIFFICULTY_LABEL = { easy: "쉬움", normal: "보통", hard: "어려움" };
+const DIFFICULTY_LABEL_KEY = { easy: "difficultyEasy", normal: "difficultyNormal", hard: "difficultyHard" };
 
 const storageKey = (dateStr) => `dailyChallenge:${dateStr}`;
 
@@ -25,6 +26,7 @@ function readSavedResult(dateStr) {
 }
 
 export default function DailyChallenge({ onNavigate, onExit }) {
+  const { locale, t } = useLocale();
   const [config] = useState(getDailyChallengeConfig);
   const [savedResult, setSavedResult] = useState(() => readSavedResult(config.dateStr));
   const [nickname, setNickname] = useState("");
@@ -62,7 +64,7 @@ export default function DailyChallenge({ onNavigate, onExit }) {
   }, [state.notice]);
 
   const timeLeft = useTurnTimer(myTurnActive, state.moveCount, () => {
-    dispatch({ type: "TIMEOUT_SKIP", id: Date.now(), message: "시간 초과! 턴이 넘어갔어요" });
+    dispatch({ type: "TIMEOUT_SKIP", id: Date.now(), message: t("noticeTimeout") });
   });
 
   const trySubmit = useCallback(async (result) => {
@@ -104,8 +106,8 @@ export default function DailyChallenge({ onNavigate, onExit }) {
   function startChallenge(event) {
     event.preventDefault();
     const clean = nickname.trim();
-    if (!clean) return setError("닉네임을 입력해주세요.");
-    const base = randomPlayers();
+    if (!clean) return setError(t("errorNicknameRequired"));
+    const base = randomPlayers(locale);
     setPlayers({ 1: { ...base[1], name: clean }, 2: base[2] });
     startTimeRef.current = Date.now();
     setStarted(true);
@@ -120,93 +122,93 @@ export default function DailyChallenge({ onNavigate, onExit }) {
     if (state.selected === index) return dispatch({ type: "CANCEL" });
     const a = state.selected;
     if (state.edges.has(edgeKey(a, index))) {
-      dispatch({ type: "SHOW_NOTICE", id: Date.now(), message: "이미 연결된 선이에요" });
+      dispatch({ type: "SHOW_NOTICE", id: Date.now(), message: t("noticeEdgeExists") });
       return;
     }
     if (edgeCrossesAny(state, a, index)) {
-      dispatch({ type: "SHOW_NOTICE", id: Date.now(), message: "다른 선과 겹칠 수 없어요" });
+      dispatch({ type: "SHOW_NOTICE", id: Date.now(), message: t("noticeEdgeCrosses") });
       return;
     }
     if (edgePassesNearDot(state, a, index)) {
-      dispatch({ type: "SHOW_NOTICE", id: Date.now(), message: "다른 점을 가로질러 연결할 수 없어요" });
+      dispatch({ type: "SHOW_NOTICE", id: Date.now(), message: t("noticeEdgeThroughDot") });
       return;
     }
     if (canConnect(state, a, index)) dispatch({ type: "MOVE", a, b: index });
   }
 
-  const subtitle = `${config.dateStr} · 난이도 ${DIFFICULTY_LABEL[config.difficulty]} · 점 ${config.dotCount}개`;
+  const subtitle = t("dailySubtitle", { date: config.dateStr, difficulty: t(DIFFICULTY_LABEL_KEY[config.difficulty]), dotCount: config.dotCount });
 
   if (savedResult && !started) {
     return <main className="app">
       <header className="title">
-        <h1><span>오늘의</span> 챌린지</h1>
+        <h1><span>{t("dailyTitlePart1")}</span>{t("dailyTitlePart2")}</h1>
         <p className="subtitle">{subtitle}</p>
       </header>
       <div className="card leaderboard-card">
-        <p className="turn-line">오늘은 이미 참여했어요!</p>
-        <p>{savedResult.name}: {savedResult.score} : {savedResult.opponentScore} (AI) · {savedResult.durationSeconds}초</p>
+        <p className="turn-line">{t("alreadyPlayed")}</p>
+        <p>{t("resultLine", { name: savedResult.name, score: savedResult.score, opponentScore: savedResult.opponentScore, duration: savedResult.durationSeconds })}</p>
         {!savedResult.submitted && <p className="form-error" role="alert">
-          {submitState === "submitting" ? "랭킹에 제출하는 중..." : "이 기록이 아직 랭킹에 반영되지 않았어요."}
+          {submitState === "submitting" ? t("submittingToLeaderboard") : t("notYetSubmitted")}
         </p>}
       </div>
       {!savedResult.submitted && <button type="button" disabled={submitState === "submitting"}
         onClick={() => trySubmit(savedResult)}>
-        {submitState === "submitting" ? "제출 중..." : "랭킹에 다시 제출하기"}
+        {submitState === "submitting" ? t("submitting") : t("resubmit")}
       </button>}
-      <button type="button" onClick={() => onNavigate("leaderboard")}>오늘의 랭킹 보기</button>
-      <button type="button" onClick={onExit}>홈으로</button>
+      <button type="button" onClick={() => onNavigate("leaderboard")}>{t("viewTodayLeaderboard")}</button>
+      <button type="button" onClick={onExit}>{t("home")}</button>
     </main>;
   }
 
   if (!started) {
     return <div className="overlay show"><form className="dialog-box setup-box" onSubmit={startChallenge}>
-      <h2>오늘의 챌린지</h2>
-      <p>{subtitle}<br />모두 같은 배치로 AI와 한 판! 하루에 한 번만 참여할 수 있어요.</p>
-      <label>닉네임<input autoFocus maxLength="12" value={nickname}
+      <h2>{t("dailyTitlePart1")}{t("dailyTitlePart2")}</h2>
+      <p>{subtitle}<br />{t("dailyIntro")}</p>
+      <label>{t("nicknameLabel")}<input autoFocus maxLength="12" value={nickname}
         onChange={(e) => { setError(""); setNickname(e.target.value); }} /></label>
       <p className="form-error" role="alert">{error}</p>
-      <button type="submit">도전 시작</button>
-      <button type="button" onClick={onExit}>홈으로</button>
+      <button type="submit">{t("startChallenge")}</button>
+      <button type="button" onClick={onExit}>{t("home")}</button>
     </form></div>;
   }
 
   return <>
     <main className="app">
       <header className="title">
-        <h1><span>오늘의</span> 챌린지</h1>
+        <h1><span>{t("dailyTitlePart1")}</span>{t("dailyTitlePart2")}</h1>
         <p className="subtitle">{subtitle}</p>
       </header>
       <div className="paper-wrap">
         <GameBoard state={state} players={players} disabled={showRules || state.gameOver || aiThinking} onPick={handlePick} />
         <div className={`toast${state.notice ? " show" : ""}`} role="status" aria-live="polite">
-          {state.notice ? state.notice.message || `${players[state.notice.player]?.name} 삼각형 완성!` : ""}
+          {state.notice ? state.notice.message || t("noticeTriangleComplete", { name: players[state.notice.player]?.name }) : ""}
         </div>
       </div>
       <aside className="side">
         <ScorePanel players={players} state={state} aiThinking={aiThinking}
           displayName={(player) => player === 2 ? `${players[player].name} (AI)` : players[player].name}
-          turnText={state.gameOver ? "게임 종료" : aiThinking ? "AI가 생각 중..." :
-            timeLeft !== null ? `${players[1].name} 차례 · ${timeLeft}초` : `${players[1].name} 차례`} />
+          turnText={state.gameOver ? t("gameOver") : aiThinking ? t("aiThinking") :
+            timeLeft !== null ? t("turnWithTime", { name: players[1].name, time: timeLeft }) : t("turnNoTime", { name: players[1].name })} />
         <section className="card controls">
-          <button type="button" onClick={() => setShowRules(true)}>게임 방법</button>
-          <button type="button" onClick={onExit}>홈으로</button>
+          <button type="button" onClick={() => setShowRules(true)}>{t("howToPlay")}</button>
+          <button type="button" onClick={onExit}>{t("home")}</button>
         </section>
       </aside>
     </main>
     {showRules && <RulesDialog onClose={() => setShowRules(false)} />}
     {!showRules && state.gameOver && savedResult && <div className="overlay show">
       <div className="dialog-box winner-box">
-        <h2>오늘의 챌린지 완료!</h2>
-        <p>{savedResult.name}: {savedResult.score} : {savedResult.opponentScore} (AI) · {savedResult.durationSeconds}초</p>
+        <h2>{t("dailyCompleteTitle")}</h2>
+        <p>{t("resultLine", { name: savedResult.name, score: savedResult.score, opponentScore: savedResult.opponentScore, duration: savedResult.durationSeconds })}</p>
         {!savedResult.submitted && <p className="form-error" role="alert">
-          {submitState === "submitting" ? "랭킹에 제출하는 중..." : "랭킹 제출에 실패했어요."}
+          {submitState === "submitting" ? t("submittingToLeaderboard") : t("submitFailed")}
         </p>}
         {!savedResult.submitted && <button type="button" disabled={submitState === "submitting"}
           onClick={() => trySubmit(savedResult)}>
-          {submitState === "submitting" ? "제출 중..." : "랭킹에 다시 제출하기"}
+          {submitState === "submitting" ? t("submitting") : t("resubmit")}
         </button>}
-        <button type="button" onClick={() => onNavigate("leaderboard")}>오늘의 랭킹 보기</button>
-        <button type="button" onClick={onExit}>홈으로</button>
+        <button type="button" onClick={() => onNavigate("leaderboard")}>{t("viewTodayLeaderboard")}</button>
+        <button type="button" onClick={onExit}>{t("home")}</button>
       </div>
     </div>}
   </>;

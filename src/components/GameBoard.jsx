@@ -2,8 +2,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { LOGICAL_H, LOGICAL_W } from "../game/constants.js";
 import { canConnect } from "../game/gameLogic.js";
 import { drawGame } from "../game/drawGame.js";
+import { useLocale } from "../i18n/LocaleContext.js";
 
 export default function GameBoard({ state, players, disabled, onPick }) {
+  const { t } = useLocale();
   const canvasRef = useRef(null);
   const pointerRef = useRef(null);
   const [hoveredDot, setHoveredDot] = useState(null);
@@ -74,7 +76,7 @@ export default function GameBoard({ state, players, disabled, onPick }) {
     onPick(nearestDot(position, event.pointerType, position.rect));
   }
 
-  return <canvas ref={canvasRef} id="board" aria-label="삼각 땅따먹기 게임판"
+  return <canvas ref={canvasRef} id="board" aria-label={t("boardAriaLabel")}
     style={{ aspectRatio: `${LOGICAL_W} / ${state.boardHeight || LOGICAL_H}` }}
     onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp}
     onPointerLeave={() => setHoveredDot(null)}

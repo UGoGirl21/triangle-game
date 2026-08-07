@@ -8,10 +8,12 @@ import { chooseAiMove } from "./game/ai.js";
 import { DIFFICULTY_DOT_COUNTS, randomPlayers } from "./game/constants.js";
 import { canConnect, createGame, edgeCrossesAny, edgePassesNearDot, gameReducer } from "./game/gameLogic.js";
 import { edgeKey } from "./game/geometry.js";
+import { useLocale } from "./i18n/LocaleContext.js";
 import { useTurnTimer } from "./useTurnTimer.js";
 
 export default function App({ onNavigate }) {
-  const [players, setPlayers] = useState(randomPlayers);
+  const { locale, t } = useLocale();
+  const [players, setPlayers] = useState(() => randomPlayers(locale));
   const [state, dispatch] = useReducer(gameReducer, undefined, createGame);
   const [difficulty, setDifficulty] = useState("normal");
   const [showSettings, setShowSettings] = useState(false);
@@ -42,7 +44,7 @@ export default function App({ onNavigate }) {
   }, [state.notice]);
 
   const timeLeft = useTurnTimer(myTurnActive, state.moveCount, () => {
-    dispatch({ type: "TIMEOUT_SKIP", id: Date.now(), message: "시간 초과! 턴이 넘어갔어요" });
+    dispatch({ type: "TIMEOUT_SKIP", id: Date.now(), message: t("noticeTimeout") });
   });
 
   function handlePick(index) {
@@ -54,15 +56,15 @@ export default function App({ onNavigate }) {
     if (state.selected === index) return dispatch({ type: "CANCEL" });
     const a = state.selected;
     if (state.edges.has(edgeKey(a, index))) {
-      dispatch({ type: "SHOW_NOTICE", id: Date.now(), message: "이미 연결된 선이에요" });
+      dispatch({ type: "SHOW_NOTICE", id: Date.now(), message: t("noticeEdgeExists") });
       return;
     }
     if (edgeCrossesAny(state, a, index)) {
-      dispatch({ type: "SHOW_NOTICE", id: Date.now(), message: "다른 선과 겹칠 수 없어요" });
+      dispatch({ type: "SHOW_NOTICE", id: Date.now(), message: t("noticeEdgeCrosses") });
       return;
     }
     if (edgePassesNearDot(state, a, index)) {
-      dispatch({ type: "SHOW_NOTICE", id: Date.now(), message: "다른 점을 가로질러 연결할 수 없어요" });
+      dispatch({ type: "SHOW_NOTICE", id: Date.now(), message: t("noticeEdgeThroughDot") });
       return;
     }
     if (canConnect(state, a, index)) dispatch({ type: "MOVE", a, b: index });
@@ -82,39 +84,39 @@ export default function App({ onNavigate }) {
     setShowSettings(false);
   }
 
-  const turnText = state.gameOver ? "게임 종료" : aiThinking ? "AI가 생각 중..." :
-    timeLeft !== null ? `${displayName(state.currentPlayer)} 차례 · ${timeLeft}초` : `${displayName(state.currentPlayer)} 차례`;
+  const turnText = state.gameOver ? t("gameOver") : aiThinking ? t("aiThinking") :
+    timeLeft !== null ? t("turnWithTime", { name: displayName(state.currentPlayer), time: timeLeft }) : t("turnNoTime", { name: displayName(state.currentPlayer) });
 
   let winnerMessage = "";
   if (state.gameOver) {
-    if (state.scores[1] === state.scores[2]) winnerMessage = "무승부입니다!";
+    if (state.scores[1] === state.scores[2]) winnerMessage = t("winnerDraw");
     else {
       const winner = state.scores[1] > state.scores[2] ? 1 : 2;
-      winnerMessage = `${displayName(winner)} 승리! (${state.scores[1]} : ${state.scores[2]})`;
+      winnerMessage = t("winnerMessage", { name: displayName(winner), s1: state.scores[1], s2: state.scores[2] });
     }
   }
 
   return <>
     <main className="app">
       <header className="title">
-        <h1><span>삼각</span> 땅따먹기</h1>
-        <p className="subtitle">Triangle Territory · 점을 이어 삼각형을 완성하세요</p>
+        <h1><span>{t("appTitlePart1")}</span>{t("appTitlePart2")}</h1>
+        <p className="subtitle">{t("appSubtitle")}</p>
       </header>
       <div className="paper-wrap">
         <GameBoard state={state} players={players} disabled={showSettings || showRules || state.gameOver || aiThinking} onPick={handlePick} />
         <div className={`toast${state.notice ? " show" : ""}`} role="status" aria-live="polite">
-          {state.notice ? state.notice.message || `${displayName(state.notice.player)} 삼각형 완성!` : ""}
+          {state.notice ? state.notice.message || t("noticeTriangleComplete", { name: displayName(state.notice.player) }) : ""}
         </div>
       </div>
       <aside className="side">
         <ScorePanel players={players} state={state} aiThinking={aiThinking} turnText={turnText} />
         <section className="card controls">
-          <button type="button" onClick={() => onNavigate("daily")}>오늘의 챌린지</button>
-          <button type="button" onClick={startNewGame}>새 게임</button>
-          <button type="button" onClick={() => onNavigate("online")}>친구와 대전</button>
-          <button type="button" onClick={() => onNavigate("leaderboard")}>랭킹</button>
-          <button type="button" onClick={() => setShowSettings(true)}>설정</button>
-          <button type="button" onClick={() => setShowRules(true)}>게임 방법</button>
+          <button type="button" onClick={() => onNavigate("daily")}>{t("dailyChallengeButton")}</button>
+          <button type="button" onClick={startNewGame}>{t("newGameButton")}</button>
+          <button type="button" onClick={() => onNavigate("online")}>{t("playFriendButton")}</button>
+          <button type="button" onClick={() => onNavigate("leaderboard")}>{t("leaderboardButton")}</button>
+          <button type="button" onClick={() => setShowSettings(true)}>{t("settingsButton")}</button>
+          <button type="button" onClick={() => setShowRules(true)}>{t("howToPlay")}</button>
         </section>
       </aside>
     </main>
