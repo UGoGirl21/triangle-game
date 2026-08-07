@@ -173,6 +173,7 @@ input, .symbol-select { width: 100%; min-height: 44px; padding: 8px 10px; color:
   #root { min-height: auto; place-items: start center; }
   .app { grid-template-columns: 1fr; gap: 16px; padding: 26px 20px 34px; border-radius: 58px 58px 76px 76px; }
   .lang-toggle { top: 12px; right: 12px; }
+  .title h1 { font-size: clamp(1.7rem, 6.5vw, 2.8rem); }
   .side { display: grid; grid-template-columns: 1fr 1fr; }
   .paper-wrap { box-shadow: 5px 5px 0 var(--yellow); }
   #board { aspect-ratio: 8 / 9; }
@@ -186,6 +187,7 @@ input, .symbol-select { width: 100%; min-height: 44px; padding: 8px 10px; color:
   body { padding-inline: 3px; }
   .app { padding: 22px 4px 28px; border-width: 4px; border-radius: 34px; }
   .lang-toggle { top: 8px; right: 8px; padding: 5px 10px; font-size: .74rem; }
+  .title h1 { font-size: clamp(1.1rem, 6vw, 1.9rem); }
   .title .eyebrow { font-size: .82rem; }
   .title .subtitle { font-size: .61rem; letter-spacing: .05em; }
   .heart-row { font-size: 1.5rem; }
