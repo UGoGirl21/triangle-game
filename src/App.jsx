@@ -1,5 +1,6 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import GameBoard from "./components/GameBoard.jsx";
+import LanguageToggle from "./components/LanguageToggle.jsx";
 import RulesDialog from "./components/RulesDialog.jsx";
 import ScorePanel from "./components/ScorePanel.jsx";
 import SettingsDialog from "./components/SettingsDialog.jsx";
@@ -98,6 +99,7 @@ export default function App({ onNavigate }) {
 
   return <>
     <main className="app">
+      <LanguageToggle />
       <header className="title">
         <h1><span>{t("appTitlePart1")}</span>{t("appTitlePart2")}</h1>
         <p className="subtitle">{t("appSubtitle")}</p>

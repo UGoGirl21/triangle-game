@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import LanguageToggle from "./components/LanguageToggle.jsx";
 import { getTodayKstDateString } from "./game/dailyChallenge.js";
 import { useLocale } from "./i18n/LocaleContext.js";
 import { supabase } from "./lib/supabaseClient.js";
@@ -22,6 +23,7 @@ export default function Leaderboard({ onExit }) {
   }, [today, t]);
 
   return <main className="app">
+    <LanguageToggle />
     <header className="title">
       <h1><span>{t("leaderboardTitle")}</span></h1>
       <p className="subtitle">{t("leaderboardSubtitle", { date: today })}</p>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import GameBoard from "../components/GameBoard.jsx";
+import LanguageToggle from "../components/LanguageToggle.jsx";
 import RulesDialog from "../components/RulesDialog.jsx";
 import ScorePanel from "../components/ScorePanel.jsx";
 import WinnerDialog from "../components/WinnerDialog.jsx";
@@ -85,6 +86,7 @@ export default function OnlineGame({ onExit }) {
     }
     return <>
       <main className="app">
+        <LanguageToggle />
         <header className="title">
           <h1><span>{t("onlineTitlePart1")}</span>{t("onlineTitlePart2")}</h1>
           <p className="subtitle">{t("roomCodeSubtitle", { code })}</p>
