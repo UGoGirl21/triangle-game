@@ -172,13 +172,14 @@ input, .symbol-select { width: 100%; min-height: 44px; padding: 8px 10px; color:
 @media (max-width: 800px) {
   body { padding-top: max(14px, env(safe-area-inset-top)); }
   #root { min-height: auto; place-items: start center; }
-  .app { grid-template-columns: 1fr; gap: 16px; padding: 26px 20px 34px; border-radius: 58px 58px 76px 76px; }
+  .app { grid-template-columns: 1fr; gap: 12px; padding: 26px 14px 34px; border-radius: 58px 58px 76px 76px; }
   .lang-toggle { top: 12px; right: 12px; }
   .title h1 { font-size: clamp(1.7rem, 6.5vw, 2.8rem); }
+  .title .subtitle { margin: 4px 0; }
   .side { display: grid; grid-template-columns: 1fr 1fr; }
-  .paper-wrap { box-shadow: 5px 5px 0 var(--yellow); }
+  .paper-wrap { padding: 9px; box-shadow: 5px 5px 0 var(--yellow); }
   #board { aspect-ratio: 8 / 9; }
-  .score-card { grid-column: 1 / -1; }
+  .score-card, .controls { grid-column: 1 / -1; }
   .players-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .players-grid .card-gap { display: none; }
   .players-grid .player-card { height: 100%; }
@@ -186,14 +187,14 @@ input, .symbol-select { width: 100%; min-height: 44px; padding: 8px 10px; color:
 
 @media (max-width: 500px) {
   body { padding-inline: 3px; }
-  .app { padding: 22px 4px 28px; border-width: 4px; border-radius: 34px; }
+  .app { padding: 22px 2px 28px; border-width: 3px; border-radius: 34px; }
   .lang-toggle { top: 8px; right: 8px; padding: 5px 10px; font-size: .74rem; }
   .title h1 { font-size: clamp(1.1rem, 6vw, 1.9rem); }
   .title .eyebrow { font-size: .82rem; }
   .title .subtitle { font-size: .61rem; letter-spacing: .05em; }
   .title .intro-text { font-size: .64rem; }
   .heart-row { font-size: 1.5rem; }
-  .paper-wrap { padding: 3px; border-width: 2px; box-shadow: 3px 3px 0 var(--yellow); }
+  .paper-wrap { padding: 2px; border-width: 2px; box-shadow: 3px 3px 0 var(--yellow); }
   .side { grid-template-columns: 1fr; }
   .side .score-card { grid-column: 1; padding: 12px 8px; }
   .players-grid { gap: 7px; }
@@ -204,6 +205,63 @@ input, .symbol-select { width: 100%; min-height: 44px; padding: 8px 10px; color:
   .team-fields { grid-template-columns: 1fr; }
   .dialog-box { padding: 24px 16px; border-radius: 30px; }
   .overlay { align-items: center; padding-top: max(16px, env(safe-area-inset-top)); }
+}
+
+.share-fab {
+  position: fixed;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: 70;
+  width: 52px; height: 52px; min-height: 0; padding: 0;
+  display: grid; place-items: center;
+  color: #fff; background: var(--purple);
+  border-radius: 50%;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.share-fab:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+.share-fab:active { transform: translate(4px, 4px); box-shadow: none; }
+
+.share-backdrop { position: fixed; inset: 0; z-index: 65; background: transparent; }
+
+.share-menu {
+  position: fixed;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: calc(52px + max(20px, env(safe-area-inset-bottom)) + 12px);
+  z-index: 70;
+  width: 200px;
+  display: grid; gap: 8px;
+  padding: 12px;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  box-shadow: 5px 5px 0 var(--ink);
+}
+.share-menu button { min-height: 40px; padding: 6px 10px; font-size: .82rem; }
+
+.share-toast {
+  position: fixed;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: 75;
+  padding: 9px 16px;
+  color: #fff;
+  background: var(--purple);
+  border: 2px solid var(--ink);
+  border-radius: 2px;
+  font-weight: 700;
+  font-size: .82rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+.share-toast.show { opacity: 1; transform: translateY(-4px); }
+
+@media (max-width: 500px) {
+  .share-fab { right: max(12px, env(safe-area-inset-right)); bottom: max(12px, env(safe-area-inset-bottom)); width: 46px; height: 46px; }
+  .share-menu { right: max(12px, env(safe-area-inset-right)); bottom: calc(46px + max(12px, env(safe-area-inset-bottom)) + 10px); width: 176px; }
+  .share-toast { right: max(12px, env(safe-area-inset-right)); bottom: max(12px, env(safe-area-inset-bottom)); font-size: .76rem; }
 }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }

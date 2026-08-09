@@ -25,7 +25,7 @@ export const translations = {
     appTitlePart1: "삼각",
     appTitlePart2: " 땅따먹기",
     appSubtitle: "Triangle Territory · 점을 이어 삼각형을 완성하세요",
-    appIntro: "삼각형 땅따먹기(삼각 땅따먹기)는 점과 점을 선으로 이어 먼저 삼각형을 완성하는 사람이 땅을 차지하는 2인 대전 게임입니다.",
+    appIntro: "삼각형 땅따먹기(삼각 땅따먹기)는 점을 이어 삼각형을 완성, 땅을 차지하는 2인 대전 게임입니다.",
     dailyChallengeButton: "오늘의 챌린지",
     newGameButton: "새 게임",
     playFriendButton: "친구와 대전",
@@ -122,6 +122,12 @@ export const translations = {
     colorBrown: "브라운",
 
     switchLanguage: "언어 변경",
+
+    shareButton: "공유하기",
+    shareViaMessage: "메시지(SNS)로 공유",
+    copyLink: "링크 복사",
+    linkCopied: "링크가 복사되었어요!",
+    linkCopyFailed: "링크 복사에 실패했어요.",
   },
   en: {
     gameOver: "Game Over",
@@ -149,7 +155,7 @@ export const translations = {
     appTitlePart1: "Triangle",
     appTitlePart2: " Territory",
     appSubtitle: "Connect the dots to complete triangles",
-    appIntro: "A two-player game where you connect dots with lines to be the first to complete a triangle and claim the territory — also known as 삼각 땅따먹기 or 삼각형 땅따먹기.",
+    appIntro: "A two-player game where you connect dots with lines to be the first to complete a triangle and claim the territory.",
     dailyChallengeButton: "Daily Challenge",
     newGameButton: "New Game",
     playFriendButton: "Play with a Friend",
@@ -246,5 +252,11 @@ export const translations = {
     colorBrown: "Brown",
 
     switchLanguage: "Switch language",
+
+    shareButton: "Share",
+    shareViaMessage: "Message",
+    copyLink: "Copy Link",
+    linkCopied: "Link copied!",
+    linkCopyFailed: "Failed to copy the link.",
   },
 };
