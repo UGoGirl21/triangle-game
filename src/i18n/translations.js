@@ -25,7 +25,7 @@ export const translations = {
     appTitlePart1: "삼각",
     appTitlePart2: " 땅따먹기",
     appSubtitle: "Triangle Territory · 점을 이어 삼각형을 완성하세요",
-    appIntro: "삼각형 땅따먹기(삼각 땅따먹기, 세모 땅따먹기)는 점을 이어 삼각형을 완성, 땅을 차지하는 2인 대전 게임입니다.",
+    appIntro: "삼각형 땅따먹기(삼각 땅따먹기, 세모 땅따먹기)는 점을 이어 삼각형을 완성해 땅을 차지하는 2인 대전 게임입니다.",
     dailyChallengeButton: "오늘의 챌린지",
     newGameButton: "새 게임",
     playFriendButton: "친구와 대전",
