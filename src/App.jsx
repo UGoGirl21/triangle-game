@@ -1,6 +1,5 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import GameBoard from "./components/GameBoard.jsx";
-import LanguageToggle from "./components/LanguageToggle.jsx";
 import RulesDialog from "./components/RulesDialog.jsx";
 import ScorePanel from "./components/ScorePanel.jsx";
 import SettingsDialog from "./components/SettingsDialog.jsx";
@@ -17,11 +16,12 @@ export default function App({ onNavigate }) {
   const [players, setPlayers] = useState(() => randomPlayers(locale));
   const [state, dispatch] = useReducer(gameReducer, undefined, createGame);
   const [difficulty, setDifficulty] = useState("normal");
+  const [started, setStarted] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const stateRef = useRef(state);
-  const aiThinking = !showSettings && !showRules && !state.gameOver && state.currentPlayer === 2;
-  const myTurnActive = !showSettings && !showRules && !state.gameOver && state.currentPlayer === 1;
+  const aiThinking = started && !showSettings && !showRules && !state.gameOver && state.currentPlayer === 2;
+  const myTurnActive = started && !showSettings && !showRules && !state.gameOver && state.currentPlayer === 1;
 
   const displayName = (player) => player === 2 ? `${players[player].name} (AI)` : players[player].name;
 
@@ -73,6 +73,7 @@ export default function App({ onNavigate }) {
 
   function startNewGame() {
     dispatch({ type: "RESET", dotCount: DIFFICULTY_DOT_COUNTS[difficulty] });
+    setStarted(false);
   }
 
   function saveSettings(values, selectedDifficulty) {
@@ -82,6 +83,7 @@ export default function App({ onNavigate }) {
     }));
     setDifficulty(selectedDifficulty);
     dispatch({ type: "RESET", dotCount: DIFFICULTY_DOT_COUNTS[selectedDifficulty] });
+    setStarted(false);
     setShowSettings(false);
   }
 
@@ -98,15 +100,17 @@ export default function App({ onNavigate }) {
   }
 
   return <>
-    <main className="app">
-      <LanguageToggle />
+    <main className="app game-app">
       <header className="title">
         <h1><span>{t("appTitlePart1")}</span>{t("appTitlePart2")}</h1>
         <p className="subtitle">{t("appSubtitle")}</p>
         <p className="intro-text">{t("appIntro")}</p>
       </header>
       <div className="paper-wrap">
-        <GameBoard state={state} players={players} disabled={showSettings || showRules || state.gameOver || aiThinking} onPick={handlePick} />
+        <GameBoard state={state} players={players} disabled={!started || showSettings || showRules || state.gameOver || aiThinking} onPick={handlePick} />
+        {!started && <div className="game-start-layer">
+          <button type="button" onClick={() => setStarted(true)}>{t("startGameButton")}</button>
+        </div>}
         <div className={`toast${state.notice ? " show" : ""}`} role="status" aria-live="polite">
           {state.notice ? state.notice.message || t("noticeTriangleComplete", { name: displayName(state.notice.player) }) : ""}
         </div>

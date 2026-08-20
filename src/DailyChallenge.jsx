@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import GameBoard from "./components/GameBoard.jsx";
-import LanguageToggle from "./components/LanguageToggle.jsx";
 import RulesDialog from "./components/RulesDialog.jsx";
 import ScorePanel from "./components/ScorePanel.jsx";
 import { chooseAiMove } from "./game/ai.js";
@@ -141,7 +140,6 @@ export default function DailyChallenge({ onNavigate, onExit }) {
 
   if (savedResult && !started) {
     return <main className="app">
-      <LanguageToggle />
       <header className="title">
         <h1><span>{t("dailyTitlePart1")}</span>{t("dailyTitlePart2")}</h1>
         <p className="subtitle">{subtitle}</p>
@@ -176,7 +174,6 @@ export default function DailyChallenge({ onNavigate, onExit }) {
 
   return <>
     <main className="app">
-      <LanguageToggle />
       <header className="title">
         <h1><span>{t("dailyTitlePart1")}</span>{t("dailyTitlePart2")}</h1>
         <p className="subtitle">{subtitle}</p>

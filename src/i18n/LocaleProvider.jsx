@@ -25,7 +25,6 @@ export function LocaleProvider({ children }) {
 
   useEffect(() => {
     document.documentElement.lang = locale;
-    document.title = translations[locale].appTitlePart1 + translations[locale].appTitlePart2;
   }, [locale]);
 
   function setLocale(next) {
