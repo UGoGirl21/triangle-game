@@ -2,8 +2,8 @@ name: Keep Supabase Active
 
 on:
   schedule:
-    # GitHub Actions cron uses UTC. 00:00 UTC = 09:00 KST.
-    - cron: "0 0 * * 5,0"
+    # Run three times daily. GitHub Actions cron uses UTC.
+    - cron: "0 0,8,16 * * *"
   workflow_dispatch:
 
 permissions:
@@ -26,10 +26,31 @@ jobs:
             exit 1
           fi
 
-          response=$(curl --fail-with-body --silent --show-error \
+          endpoint="${SUPABASE_URL%/}/rest/v1/game_results?select=id&limit=1"
+          response_file=$(mktemp)
+          trap 'rm -f "${response_file}"' EXIT
+
+          echo "Querying table endpoint: /rest/v1/game_results?select=id&limit=1"
+
+          if ! http_status=$(curl --silent --show-error \
+            --output "${response_file}" \
+            --write-out "%{http_code}" \
             --request GET \
             --header "apikey: ${SUPABASE_ANON_KEY}" \
             --header "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
-            "${SUPABASE_URL%/}/rest/v1/game_results?select=id&limit=1")
+            "${endpoint}"); then
+            echo "HTTP status: ${http_status:-000}"
+            echo "Response body: $(cat "${response_file}")"
+            echo "Supabase database request failed before receiving a valid response."
+            exit 1
+          fi
 
-          echo "Supabase database query succeeded: ${response}"
+          echo "HTTP status: ${http_status}"
+          echo "Response body: $(cat "${response_file}")"
+
+          if [[ ! "${http_status}" =~ ^2[0-9]{2}$ ]]; then
+            echo "Supabase database query failed with HTTP ${http_status}."
+            exit 1
+          fi
+
+          echo "Supabase database query succeeded."
