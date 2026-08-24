@@ -1,5 +1,13 @@
 {
   "rewrites": [
+    { "source": "/how-to-play", "destination": "/how-to-play/index.html" },
+    { "source": "/strategy", "destination": "/strategy/index.html" },
+    { "source": "/daily-challenge", "destination": "/daily-challenge/index.html" },
+    { "source": "/faq", "destination": "/faq/index.html" },
+    { "source": "/about", "destination": "/about/index.html" },
+    { "source": "/privacy", "destination": "/privacy/index.html" },
+    { "source": "/terms", "destination": "/terms/index.html" },
+    { "source": "/contact", "destination": "/contact/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
