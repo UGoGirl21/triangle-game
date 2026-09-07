@@ -2,7 +2,8 @@ import ShareButton from "./components/ShareButton.jsx";
 import SiteChrome from "./components/SiteChrome.jsx";
 import { LocaleContext } from "./i18n/LocaleContext.js";
 import { translations } from "./i18n/translations.js";
-import SiteContent from "./SiteContent.jsx";
+import SiteContent, { HomeContent } from "./SiteContent.jsx";
+import App from "./App.jsx";
 
 function translate(key, vars) {
   const template = translations.ko[key] ?? translations.en[key] ?? key;
@@ -33,7 +34,7 @@ function DailyChallengePreview() {
 }
 
 export default function PrerenderApp({ path }) {
-  const page = path === "/daily-challenge"
+  const page = path === "/" ? <><App onNavigate={navigate} /><HomeContent /></> : path === "/daily-challenge"
     ? <DailyChallengePreview />
     : <SiteContent path={path} />;
 

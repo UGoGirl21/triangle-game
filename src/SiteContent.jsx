@@ -1,3 +1,4 @@
+import GuideExamples from "./components/GuideExamples.jsx";
 import { useLocale } from "./i18n/LocaleContext.js";
 
 const content = {
@@ -9,7 +10,7 @@ const content = {
         ["게임 목표", ["게임판의 점들을 연결해 삼각형을 만드세요. 새 선으로 완성된 삼각형은 선을 그은 플레이어의 영역이 되고 1점을 얻습니다.", "더 이상 그을 수 있는 유효한 선이 없을 때 게임이 끝나며, 더 많은 삼각형을 차지한 플레이어가 승리합니다."]],
         ["한 턴 진행 방법", ["연결할 첫 번째 점을 선택한 다음 두 번째 점을 선택하면 선이 그어집니다.", "이미 연결된 두 점에는 선을 다시 그을 수 없습니다. 선택을 바꾸고 싶다면 선택한 점을 다시 누르거나 게임판의 빈 곳을 누르세요."]],
         ["그을 수 없는 선", ["새 선은 기존 선과 교차할 수 없습니다.", "다른 점을 관통하거나 너무 가깝게 지나가는 선도 허용되지 않습니다.", "이 조건 덕분에 게임판은 겹치지 않는 작은 영역들로 나뉩니다."]],
-        ["점수 계산", ["한 번의 선으로 여러 삼각형이 동시에 완성되면 완성한 삼각형 수만큼 모두 점수를 얻습니다.", "이미 다른 삼각형 안에 포함된 큰 삼각형을 중복 영역으로 세지 않고, 게임 로직이 새로 닫힌 유효 영역을 판정합니다."]],
+        ["점수 계산", ["한 번의 선으로 여러 삼각형이 동시에 완성되면 완성한 삼각형 수만큼 모두 점수를 얻습니다.", "새 선의 양 끝점과 다른 한 점이 세 변으로 연결되면 삼각형으로 판정합니다. 이미 점수를 얻은 같은 삼각형은 다시 세지 않습니다. 득점 후에도 차례는 상대에게 넘어갑니다."]],
         ["게임 모드", ["AI 대전에서는 쉬움·보통·어려움 난이도를 선택할 수 있습니다. 온라인 대전은 한 사람이 방을 만들고 6자리 코드를 상대에게 공유합니다.", "오늘의 챌린지는 모든 참가자가 같은 점 배치와 난이도로 AI를 상대하며, 점수와 완료 시간으로 순위를 비교합니다."]],
       ],
     },
@@ -87,7 +88,7 @@ const content = {
 };
 
 content.en = {
-  "/how-to-play": { eyebrow: "A guide for first-time players", title: "How to play Triangle Territory", intro: "Players take turns connecting dots with straight lines. Complete triangles, claim territory, and finish with the highest score.", sections: [["Goal", ["Complete a triangle by drawing its final side. Each newly completed valid triangle becomes your territory and scores one point.", "The game ends when no valid line remains. The player with more territory wins."]], ["Taking a turn", ["Select one dot, then another to draw a line. You cannot draw a duplicate line.", "Tap the selected dot again or an empty area to cancel your selection."]], ["Invalid lines", ["A new line cannot cross an existing line or pass through another dot.", "These rules divide the board into distinct, non-overlapping regions."]], ["Scoring", ["If one line completes several triangles, you score every newly completed triangle.", "The game logic detects newly enclosed valid regions rather than counting the same territory twice."]], ["Modes", ["Practice against three AI levels, create a six-character room for a friend, or play the same daily layout as everyone else."]]] },
+  "/how-to-play": { eyebrow: "A guide for first-time players", title: "How to play Triangle Territory", intro: "Players take turns connecting dots with straight lines. Complete triangles, claim territory, and finish with the highest score.", sections: [["Goal", ["Complete a triangle by drawing its final side. Each newly completed valid triangle becomes your territory and scores one point.", "The game ends when no valid line remains. The player with more territory wins."]], ["Taking a turn", ["Select one dot, then another to draw a line. You cannot draw a duplicate line.", "Tap the selected dot again or an empty area to cancel your selection."]], ["Invalid lines", ["A new line cannot cross an existing line or pass through another dot.", "These rules divide the board into distinct, non-overlapping regions."]], ["Scoring", ["If one line completes several triangles, you score every newly completed triangle.", "Three dots connected by all three sides form a triangle. An already scored triangle is not counted again. Scoring still passes the turn to the opponent."]], ["Modes", ["Practice against three AI levels, create a six-character room for a friend, or play the same daily layout as everyone else."]]] },
   "/strategy": { eyebrow: "How to claim more territory", title: "Triangle Territory strategy guide", intro: "A strong move considers both the point you can score now and the triangle your opponent may complete next.", sections: [["Start with open triangles", ["Look for three dots with two existing sides. The missing side may score immediately.", "Before drawing, check whether your move gives the opponent an easy final side."]], ["Divide the board carefully", ["Long central lines remove many future connections. Blocking the center too early can also reduce your own choices.", "Use short lines to create more than one scoring threat."]], ["Create multi-score moves", ["Try to make one future line the shared final side of multiple open triangles.", "Compare how many new regions each candidate line would close."]], ["Use AI levels to learn", ["Easy is suited to learning the controls. Normal prioritizes immediate captures, while Hard also avoids some moves that offer an immediate reply."]], ["Plan the endgame", ["When few lines remain, test each candidate in your head. If ahead, reduce safe options; if behind, seek shapes that can close multiple regions."]]] },
   "/faq": { eyebrow: "Answers about play and data", title: "Frequently asked questions", intro: "Common questions about the rules, online rooms, the daily challenge, and stored information.", sections: [["Is the game free?", ["Yes. You can play in a modern browser without installing anything."]], ["Why is a line rejected?", ["It may already exist, cross another line, or pass through a third dot. Choose another pair of dots."]], ["How do online matches work?", ["Create a room and share its six-character code. Your friend can use that code to join."]], ["Why is the daily challenge limited?", ["The result is stored in your browser to help keep the daily comparison fair. Clearing browser data may reset that state."]], ["What appears on the leaderboard?", ["Your chosen nickname, scores, and completion time. Do not use a real name or contact details as a nickname."]], ["How do I report a problem?", ["Email the address on the Contact page with your browser, device type, and reproduction steps. Do not send private information or room codes."]]] },
   "/about": { eyebrow: "An original browser strategy game", title: "About Triangle Territory", intro: "Triangle Territory turns the familiar pen-and-paper idea of connecting dots into a quick, replayable browser game.", sections: [["What makes it different", ["The game includes original dot generation, line-intersection and territory detection, and three AI levels.", "It supports solo practice, live rooms with friends, and a shared daily challenge."]], ["Why it was made", ["The goal was a game that takes only a moment to learn but creates a different tactical board every time."]], ["Operating principles", ["We aim to explain the game accurately, request as little personal information as possible, and respond to errors and privacy requests."]]] },
@@ -100,7 +101,7 @@ export function HomeContent() {
   const { locale } = useLocale();
   const ko = locale === "ko";
   const cards = ko ? [
-    ["누구나 바로 시작하는 전략 게임", "점 두 개를 골라 선을 긋고 삼각형을 완성하면 내 영역이 됩니다. 규칙은 간단하지만 점 배치가 매번 달라 같은 판이 반복되지 않습니다."],
+    ["누구나 바로 시작하는 전략 게임", "점 두 개를 골라 선을 긋고 삼각형을 완성하면 내 영역이 됩니다. 규칙은 간단하지만 점 배치가 매번 달라 새로운 전략을 시도할 수 있습니다."],
     ["세 가지 AI 난이도", "쉬움에서 조작과 규칙을 익히고, 보통과 어려움에서 즉시 득점과 상대의 다음 수까지 고려하는 플레이에 도전할 수 있습니다."],
     ["친구와 온라인 대전", "방을 만든 뒤 6자리 코드를 공유하면 별도 계정 없이 친구가 참가할 수 있습니다. 두 플레이어의 게임판과 차례가 실시간으로 동기화됩니다."],
     ["모두 같은 오늘의 챌린지", "매일 정해진 점 배치와 AI 난이도로 한 판을 플레이합니다. 획득한 영역 수와 완료 시간을 다른 참가자의 기록과 비교할 수 있습니다."],
@@ -115,6 +116,8 @@ export function HomeContent() {
       <h2 id="home-guide-title">{ko ? "삼각형 하나에서 시작되는 땅따먹기" : "Territory begins with one triangle"}</h2>
       <p>{ko ? "설치 없이 AI와 연습하고, 친구를 초대하거나 오늘의 기록에 도전해 보세요." : "Practice against AI, invite a friend, or compete on today's board—no installation required."}</p>
     </header>
+    <p>{ko ? "한 차례에 선 하나를 그으며, 득점해도 다음은 상대 차례입니다. 처음이라면 그림으로 규칙을 익힌 뒤 AI와 연습해 보세요." : "Draw one line per turn. Even after scoring, the opponent plays next. Start with the illustrated rules, then practice against AI."}</p>
+    <nav className="guide-links" aria-label={ko ? "게임 배우기" : "Learn the game"}><a href="/how-to-play">{ko ? "그림으로 배우는 게임 방법" : "Illustrated rules"}</a><a href="/strategy">{ko ? "직접 풀어보는 전략 예제" : "Interactive strategy examples"}</a></nav>
     <div className="home-content-grid">{cards.map(([title, body]) => <article key={title}><h3>{title}</h3><p>{body}</p></article>)}</div>
   </section>;
 }
@@ -138,5 +141,6 @@ export default function SiteContent({ path }) {
         })}
       </section>)}
     </div>
+    <GuideExamples path={path} />
   </main>;
 }

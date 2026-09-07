@@ -317,3 +317,20 @@ input, .symbol-select { width: 100%; min-height: 44px; padding: 8px 10px; color:
 }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+
+.guide-examples { margin-top: 38px; line-height: 1.8; }
+.guide-examples h2, .guide-example h3 { color: var(--purple); }
+.guide-example { margin-top: 24px; padding: clamp(14px, 3vw, 26px); border: 2px solid var(--ink); background: #fff; border-radius: 18px; }
+.guide-example h3 { margin: 0 0 12px; font-size: 1.3rem; }
+.guide-example-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.guide-example figure { margin: 0; min-width: 0; }
+.guide-example svg { display: block; width: 100%; height: auto; background: #fffaf0; border-radius: 12px; }
+.guide-example figcaption { font-size: .85rem; margin-top: 8px; }
+.guide-actions, .guide-links { display: flex; flex-wrap: wrap; gap: 12px; margin: 18px 0; }
+.guide-actions button { width: auto; font-size: .9rem; }
+.guide-actions button[aria-pressed="true"] { background: var(--purple); color: white; }
+.guide-example summary { cursor: pointer; font-weight: 700; text-decoration: underline; padding: 12px 0; }
+.guide-example summary:focus-visible, .guide-links a:focus-visible { outline: 3px solid var(--purple); outline-offset: 4px; }
+.guide-takeaway { padding: 14px; background: #fff8cf; border-left: 4px solid var(--orange); }
+.guide-links a { color: var(--purple); font-weight: 700; text-underline-offset: 4px; }
+@media (max-width: 800px) { .guide-example-layout { grid-template-columns: 1fr; gap: 12px; } }

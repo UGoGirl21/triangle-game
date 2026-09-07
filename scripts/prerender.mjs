@@ -9,6 +9,10 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "
 const distDir = path.join(projectRoot, "dist");
 const siteUrl = "https://triangle-game-one.vercel.app";
 const pages = {
+  "/": [
+    "삼각 땅따먹기 – 무료 전략 보드게임",
+    "점을 연결해 삼각형을 완성하고 더 많은 영역을 차지하세요. AI 대전, 온라인 대전과 오늘의 챌린지를 무료로 즐길 수 있습니다.",
+  ],
   "/how-to-play": [
     "게임 방법 | 삼각 땅따먹기",
     "삼각 땅따먹기의 선 연결 규칙, 유효하지 않은 선, 점수 계산과 게임 모드를 자세히 알아보세요.",
@@ -58,7 +62,7 @@ function replaceAttribute(html, selectorPattern, attribute, value) {
 }
 
 const template = await readFile(path.join(distDir, "index.html"), "utf8");
-const vite = await createServer({ root: projectRoot, server: { middlewareMode: true }, appType: "custom" });
+const vite = await createServer({ root: projectRoot, server: { middlewareMode: true, hmr: false, ws: false }, appType: "custom" });
 
 try {
   const { default: PrerenderApp } = await vite.ssrLoadModule("/src/PrerenderApp.jsx");
