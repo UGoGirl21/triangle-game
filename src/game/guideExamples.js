@@ -4,6 +4,26 @@ const diamond = [{ x: 180, y: 40 }, { x: 310, y: 150 }, { x: 180, y: 260 }, { x:
 
 export const guideExamples = [
   {
+    id: 'three-move-endgame', page: '/strategy', dots: diamond,
+    edges: [[0, 1], [1, 2]], choices: [[0, 2], [1, 3]], expected: [1, 0],
+    continuations: [[[0, 3], [2, 3]], [[2, 3], [0, 3]]],
+    finalScores: [{ 1: 2, 2: 0 }, { 1: 1, 2: 1 }],
+    ko: {
+      title: '세 수 앞까지: 대각선 선택으로 달라지는 최종 점수',
+      setup: 'AB와 BC만 연결된 0 대 0의 판입니다. AC로 삼각형을 만들거나 BD로 반대쪽 대각선을 먼저 차지할 수 있습니다. 한 수의 점수와 남은 두 수를 함께 계산해 보세요.',
+      question: 'AC와 BD 중 최종 점수가 더 좋은 선택은 무엇일까요?',
+      answers: ['AC는 ABC를 완성해 즉시 1점을 얻습니다. 상대가 AD를 그으면 0점이고, 내가 CD로 ACD를 완성하면 2 대 0으로 끝납니다. 상대가 CD부터 그어도 내가 AD로 마지막 삼각형을 완성하므로 결과는 같습니다.', 'BD는 0점이고 AC를 교차로 막습니다. 상대가 CD로 BCD를 완성해 1점을 얻고, 내가 AD로 ABD를 완성하면 1 대 1입니다. 상대가 AD부터 선택해도 남은 CD로 내가 1점을 얻어 비깁니다.'],
+      takeaway: '이 판에서는 AC가 승리를, BD가 무승부를 만듭니다. 대각선이 막는 선뿐 아니라 상대 차례 이후 마지막 변을 누가 그리는지까지 세어 보세요.',
+    },
+    en: {
+      title: 'Three moves ahead: which diagonal wins the endgame?',
+      setup: 'Only AB and BC exist, with scores at 0–0. Capture with AC or occupy the other diagonal with BD. Compare the immediate score and the two moves left afterward.',
+      question: 'Which choice gives the better final score: AC or BD?',
+      answers: ['AC completes ABC for 1 point. The opponent draws AD for 0, then your CD completes ACD to finish 2–0. If the opponent draws CD first, your AD captures the last triangle for the same result.', 'BD scores 0 and blocks AC by crossing. The opponent draws CD to capture BCD for 1, then your AD captures ABD to finish 1–1. If the opponent draws AD first, your remaining CD also gives a draw.'],
+      takeaway: 'AC wins this board; BD draws. Count who closes the last side after the opponent’s turn, as well as which lines a diagonal blocks.',
+    },
+  },
+  {
     id: 'first-capture', page: '/how-to-play',
     dots: [{ x: 70, y: 240 }, { x: 180, y: 50 }, { x: 290, y: 240 }],
     edges: [[0, 1], [1, 2]], choices: [[0, 2]], expected: [1],

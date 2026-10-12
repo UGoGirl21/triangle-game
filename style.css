@@ -334,3 +334,8 @@ input, .symbol-select { width: 100%; min-height: 44px; padding: 8px 10px; color:
 .guide-takeaway { padding: 14px; background: #fff8cf; border-left: 4px solid var(--orange); }
 .guide-links a { color: var(--purple); font-weight: 700; text-underline-offset: 4px; }
 @media (max-width: 800px) { .guide-example-layout { grid-template-columns: 1fr; gap: 12px; } }
+
+.daily-entry { margin-bottom: 24px; }
+.daily-entry label { display: block; margin: 14px 0; }
+.daily-entry input { display: block; width: 100%; max-width: 360px; margin-top: 8px; }
+.daily-entry button { width: auto; margin: 8px 12px 8px 0; }

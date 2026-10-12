@@ -9,13 +9,17 @@ const lineName = ([a, b]) => `${name(a)}${name(b)}`;
 function Example({ example, locale }) {
   const [choice, setChoice] = useState(null);
   const [showReply, setShowReply] = useState(false);
+  const [continuationStep, setContinuationStep] = useState(0);
   const titleId = useId();
   const ko = locale === 'ko';
   const copy = example[ko ? 'ko' : 'en'];
   const initial = createExampleState(example);
   const after = choice === null ? initial : applyMove(initial, ...example.choices[choice]);
   const reply = choice === null ? null : example.replies?.[choice];
-  const state = showReply && reply ? applyMove(after, ...reply) : after;
+  const continuation = choice === null ? [] : example.continuations?.[choice] || [];
+  const state = continuation.length
+    ? continuation.slice(0, continuationStep).reduce((current, move) => applyMove(current, ...move), after)
+    : showReply && reply ? applyMove(after, ...reply) : after;
   const invalid = choice !== null && after === initial;
   const preview = choice === null ? null : example.choices[choice];
   const segment = ([a, b], { key, ...props }) => <line key={key} x1={example.dots[a].x} y1={example.dots[a].y}
@@ -42,8 +46,8 @@ function Example({ example, locale }) {
         <p>{copy.question}</p>
         <div className="guide-actions" role="group" aria-label={copy.question}>
           {example.choices.map((move, i) => <button type="button" key={lineName(move)} aria-pressed={choice === i}
-            onClick={() => { setChoice(i); setShowReply(false); }}>{lineName(move)} {ko ? '그어보기' : '— try move'}</button>)}
-          <button type="button" onClick={() => { setChoice(null); setShowReply(false); }}>{ko ? '처음으로' : 'Reset'}</button>
+            onClick={() => { setChoice(i); setShowReply(false); setContinuationStep(0); }}>{lineName(move)} {ko ? '그어보기' : '— try move'}</button>)}
+          <button type="button" onClick={() => { setChoice(null); setShowReply(false); setContinuationStep(0); }}>{ko ? '처음으로' : 'Reset'}</button>
         </div>
         <div className="guide-result" role="status" aria-live="polite" aria-atomic="true">
           {choice === null ? <p>{ko ? '각 선택은 같은 시작 상태에서 비교합니다.' : 'Each choice starts from the same position.'}</p> : <>
@@ -53,6 +57,12 @@ function Example({ example, locale }) {
           </>}
         </div>
         {reply && !showReply && <button type="button" onClick={() => setShowReply(true)}>{ko ? `상대의 ${lineName(reply)}도 보기` : `Show opponent’s ${lineName(reply)}`}</button>}
+        {continuation.length > 0 && <div className="guide-actions">
+          {continuationStep < continuation.length && <button type="button" onClick={() => setContinuationStep(continuationStep + 1)}>
+            {ko ? `${continuationStep === 0 ? '상대' : '나'}의 ${lineName(continuation[continuationStep])} 보기` : `Show ${continuationStep === 0 ? 'opponent’s' : 'your'} ${lineName(continuation[continuationStep])}`}
+          </button>}
+          <p>{ko ? `이후 진행: ${continuation.map(lineName).join(' → ')} · ${continuationStep}/${continuation.length}수 확인` : `Continuation: ${continuation.map(lineName).join(' → ')} · ${continuationStep}/${continuation.length} moves shown`}</p>
+        </div>}
       </div>
     </div>
     <details><summary>{ko ? '모든 선택의 해설 읽기' : 'Read the explanation for every choice'}</summary>

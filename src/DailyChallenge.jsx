@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import DailyChallengeIntro from "./components/DailyChallengeIntro.jsx";
+import { LOGICAL_H } from "./game/constants.js";
 import GameBoard from "./components/GameBoard.jsx";
 import RulesDialog from "./components/RulesDialog.jsx";
 import ScorePanel from "./components/ScorePanel.jsx";
@@ -36,7 +38,7 @@ export default function DailyChallenge({ onNavigate, onExit }) {
   const [showRules, setShowRules] = useState(false);
   const [submitState, setSubmitState] = useState("idle");
   const [state, dispatch] = useReducer(gameReducer, undefined, () =>
-    createGame(config.dotCount, { rng: mulberry32(config.dotsSeed) }));
+    createGame(config.dotCount, { rng: mulberry32(config.dotsSeed), boardHeight: LOGICAL_H }));
   const startTimeRef = useRef(null);
   const submittedRef = useRef(false);
   const stateRef = useRef(state);
@@ -161,15 +163,15 @@ export default function DailyChallenge({ onNavigate, onExit }) {
   }
 
   if (!started) {
-    return <div className="overlay show"><form className="dialog-box setup-box" onSubmit={startChallenge}>
+    return <DailyChallengeIntro><form className="content-card daily-entry" onSubmit={startChallenge}>
       <h2>{t("dailyTitlePart1")}{t("dailyTitlePart2")}</h2>
       <p>{subtitle}<br />{t("dailyIntro")}</p>
-      <label>{t("nicknameLabel")}<input autoFocus maxLength="12" value={nickname}
+      <label>{t("nicknameLabel")}<input maxLength="12" value={nickname}
         onChange={(e) => { setError(""); setNickname(e.target.value); }} /></label>
       <p className="form-error" role="alert">{error}</p>
       <button type="submit">{t("startChallenge")}</button>
       <button type="button" onClick={onExit}>{t("home")}</button>
-    </form></div>;
+    </form></DailyChallengeIntro>;
   }
 
   return <>

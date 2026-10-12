@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { applyMove, canConnect } from '../src/game/gameLogic.js';
+import { getDailyChallengeConfig } from '../src/game/dailyChallenge.js';
+import { mulberry32 } from '../src/game/rng.js';
+import { LOGICAL_H } from '../src/game/constants.js';
+import { applyMove, canConnect, createGame } from '../src/game/gameLogic.js';
 import { guideExamples, createExampleState } from '../src/game/guideExamples.js';
 
 for (const example of guideExamples) {
@@ -15,6 +18,15 @@ for (const example of guideExamples) {
     }
     assert.equal(after.scores[1], expected, `${example.id}: score`);
     assert.equal(after.currentPlayer, 2, `${example.id}: no bonus turn`);
+    if (example.continuations) {
+      let end = after;
+      for (const continuation of example.continuations[i]) {
+        assert.equal(canConnect(end, ...continuation), true, `${example.id}: continuation legality`);
+        end = applyMove(end, ...continuation);
+      }
+      assert.deepEqual(end.scores, example.finalScores[i], `${example.id}: final scores`);
+      assert.equal(end.gameOver, true, `${example.id}: endgame`);
+    }
     if (example.replies) {
       const end = applyMove(after, ...example.replies[i]);
       assert.deepEqual(end.scores, i === 0 ? { 1: 1, 2: 1 } : { 1: 0, 2: 2 });
@@ -38,4 +50,13 @@ for (const route of ['', 'how-to-play', 'strategy', 'daily-challenge', 'faq', 'a
   }
   if (examples.length) assert.match(html, /<svg /, 'Static board diagrams');
 }
-console.log('Verified 5 guide boards, move outcomes, replies, and 9 prerendered pages.');
+const config = getDailyChallengeConfig('2026-10-12');
+const dailyBoard = () => createGame(config.dotCount, { rng: mulberry32(config.dotsSeed), boardHeight: LOGICAL_H });
+const desktop = dailyBoard();
+globalThis.window = { matchMedia: () => ({ matches: true }) };
+try {
+  assert.deepEqual(dailyBoard().dots, desktop.dots, 'Daily board identical on mobile and desktop');
+} finally {
+  delete globalThis.window;
+}
+console.log(`Verified ${guideExamples.length} guide boards, move outcomes, continuations, daily board consistency, and 9 prerendered pages.`);
