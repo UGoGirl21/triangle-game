@@ -24,9 +24,8 @@ function isUnsafe(state, a, b) {
   return false;
 }
 
-const randomItem = (items) => items[Math.floor(Math.random() * items.length)];
-
-export function chooseAiMove(state, difficulty) {
+export function chooseAiMove(state, difficulty, rng = Math.random) {
+  const randomItem = (items) => items[Math.floor(rng() * items.length)];
   const moves = getLegalMoves(state);
   if (!moves.length) return null;
   const scored = moves.map(([a, b]) => ({ a, b, captures: countCaptures(state, a, b) }));
@@ -36,10 +35,10 @@ export function chooseAiMove(state, difficulty) {
     const move = randomItem(completing.filter((item) => item.captures === best));
     return [move.a, move.b];
   };
-  if (difficulty === "easy") return completing.length && Math.random() < 0.6 ? bestCompleting() : randomItem(moves);
+  if (difficulty === "easy") return completing.length && rng() < 0.6 ? bestCompleting() : randomItem(moves);
   if (completing.length) return bestCompleting();
   if (difficulty === "normal") {
-    if (Math.random() < 0.5) return randomItem(moves);
+    if (rng() < 0.5) return randomItem(moves);
     const safe = moves.filter(([a, b]) => !isUnsafe(state, a, b));
     return randomItem(safe.length ? safe : moves);
   }

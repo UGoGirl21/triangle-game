@@ -4,9 +4,8 @@ import { LOGICAL_H } from "./game/constants.js";
 import GameBoard from "./components/GameBoard.jsx";
 import RulesDialog from "./components/RulesDialog.jsx";
 import ScorePanel from "./components/ScorePanel.jsx";
-import { chooseAiMove } from "./game/ai.js";
 import { randomPlayers } from "./game/constants.js";
-import { getDailyChallengeConfig } from "./game/dailyChallenge.js";
+import { chooseDailyAiMove, getDailyChallengeConfig } from "./game/dailyChallenge.js";
 import { canConnect, createGame, edgeCrossesAny, edgePassesNearDot, gameReducer } from "./game/gameLogic.js";
 import { edgeKey } from "./game/geometry.js";
 import { useLocale } from "./i18n/LocaleContext.js";
@@ -53,11 +52,11 @@ export default function DailyChallenge({ onNavigate, onExit }) {
   useEffect(() => {
     if (!aiThinking) return undefined;
     const timer = window.setTimeout(() => {
-      const move = chooseAiMove(stateRef.current, config.difficulty);
+      const move = chooseDailyAiMove(stateRef.current, config);
       if (move) dispatch({ type: "MOVE", a: move[0], b: move[1] });
     }, 500 + Math.random() * 500);
     return () => window.clearTimeout(timer);
-  }, [aiThinking, config.difficulty, state.moveCount]);
+  }, [aiThinking, config, state.moveCount]);
 
   useEffect(() => {
     if (!state.notice) return undefined;
